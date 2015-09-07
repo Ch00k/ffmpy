@@ -9,6 +9,9 @@ from ffmpy.exceptions import (
 )
 
 
+__version__ = '0.0.2'
+
+
 # TODO: Improve documentation (improve descriptions, add usage examples etc.)
 class FF(object):
     """Wrapper for various `ffmpeg <https://www.ffmpeg.org/>`_. related applications (ffmpeg,
