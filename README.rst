@@ -7,3 +7,7 @@ Installation
 Installation is as simple as running::
 
     ~$ pip install ffmpy
+
+Usage
+-----
+ffmpy resembles the command line approach ffmpeg uses. It can read from an arbitrary number of input "files" (regular files, pipes, network streams, grabbing devices, etc.) and write into arbitrary number of output "files". See `ffmpeg documentation <https://ffmpeg.org/ffmpeg.html#Synopsis>`_ for further details.

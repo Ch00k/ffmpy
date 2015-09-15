@@ -9,23 +9,16 @@ class FFmpeg(FF):
     output (as a byte string).
     """
 
-    def __init__(self, executable='ffmpeg', global_options=None, input_options=None, inputs=None,
-                 output_options=None, outputs=None):
+    def __init__(self, executable='ffmpeg', global_options='', inputs=None, outputs=None):
         """Create an instance of FFmpeg.
 
         :param str executable: absolute path to ffmpeg executable
-        :param list global_options: global options passed to ffmpeg executable
-        :param list input_options: options for input. A tuple of lists that will be merged with
-            corresponding inputs
-        :param list inputs: one or more inputs for processing (as passed to ``-i`` command line
-            option of ffmpeg)
-        :param list output_options: options for output. A tuple of lists that will be merged with
-            corresponding outputs
-        :param list outputs: one or more outputs where the ffmpeg results will be piped
+        :param str global_options: global options passed to ffmpeg executable
+        :param dict inputs: a dictionary specifying one or more inputs as keys with their
+            corresponding options as values
+        :param dict outputs: a dictionary specifying one or more outputs as keys with their
+            corresponding options as values
         """
-        global_options = global_options or []
-        global_options += ['-y']
         super(FFmpeg, self).__init__(
-            executable=executable, global_options=global_options, input_options=input_options,
-            inputs=inputs, output_options=output_options, outputs=outputs
+            executable=executable, global_options=global_options, inputs=inputs, outputs=outputs
         )
