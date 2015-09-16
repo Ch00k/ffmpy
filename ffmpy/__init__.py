@@ -39,7 +39,6 @@ class FF(object):
         self.cmd += self.merge_args_opts(inputs, input_option=True)
         self.cmd += self.merge_args_opts(outputs)
         self.cmd_str = list2cmdline(self.cmd)
-        print(self.cmd_str)
 
     def __repr__(self):
         return '<%s %r>' % (self.__class__.__name__, self.cmd_str)
