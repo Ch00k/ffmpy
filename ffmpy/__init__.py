@@ -32,12 +32,26 @@ class FF(object):
         """
 
         self.cmd = [executable]
-        self.cmd += shlex.split(global_options)
+
+        if not self.isiterable(global_options):
+            global_options = shlex.split(global_options)
+        self.cmd += global_options
         self.cmd += self.merge_args_opts(inputs, input_option=True)
         self.cmd += self.merge_args_opts(outputs)
+        self.cmd_str = list2cmdline(self.cmd)
+        print(self.cmd_str)
 
     def __repr__(self):
-        return '<%s %r>' % (self.__class__.__name__, list2cmdline(self.cmd))
+        return '<%s %r>' % (self.__class__.__name__, self.cmd_str)
+
+    def isiterable(self, obj):
+        """Check if the object is an iterable type.
+
+        :param object obj: an object to be checked
+        :return: True if the object is iterable but is not a string, False otherwise
+        :rtype: bool
+        """
+        return hasattr(obj, '__iter__') and not isinstance(obj, str)
 
     def merge_args_opts(self, args_opts_dict, **kwargs):
         """Merge input/output options with corresponding input/output arguments
@@ -53,7 +67,9 @@ class FF(object):
         if not args_opts_dict:
             return merged
         for arg, opt in args_opts_dict.items():
-            merged += shlex.split(opt)
+            if not self.isiterable(opt):
+                opt = shlex.split(opt or '')
+            merged += opt
             if not arg:
                 continue
             if 'input_option' in kwargs:
@@ -77,7 +93,7 @@ class FF(object):
         if ff_command.returncode != 0:
             raise FFRuntimeError(
                 "ffmpeg call '{0}' exited with status {1}\n{2}".format(
-                    list2cmdline(self.cmd), ff_command.returncode, out[1])
+                    self.cmd_str, ff_command.returncode, out[1])
             )
         return out[0]
 

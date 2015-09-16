@@ -34,7 +34,7 @@ class FFprobe(FF):
         :rtype: dict
         """
         output = super(FFprobe, self).run(input_data)
-        if '-print_format json' in self.cmd:
+        if '-print_format json' in self.cmd_str:
             output = json.loads(output)
 
         # TODO: Convert all "numeric" strings to int/float
