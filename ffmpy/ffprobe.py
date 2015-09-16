@@ -11,48 +11,31 @@ class FFprobe(FF):
     (as a byte string) is passed to ffprobe on standard input. Result is presented in JSON format.
     """
 
-    def __init__(self, executable='ffprobe', global_options=None, input_options=None, inputs=None,
-                 output_options=None, outputs=None):
+    def __init__(self, executable='ffprobe', global_options='', inputs=None):
         """Create an instance of FFprobe.
 
-        :param str executable: absolute path to ffmpeg executable
-        :param list global_options: global options passed to ffmpeg executable
-        :param list input_options: options for input
-        :param list inputs: one or more inputs for processing (as passed to ``-i`` command line
-            option of ffmpeg)
-        :param list output_options: options for output
-        :param list outputs: one or more outputs where the ffmpeg results will be piped
+        :param str executable: absolute path to ffprobe executable
+        :param str global_options: global options passed to ffmpeg executable
+        :param dict inputs: a dictionary specifying one or more inputs as keys with their
+            corresponding options as values
         """
-        output_options = output_options or []
-        output_options += ['-print_format', 'json']
         super(FFprobe, self).__init__(
-            executable=executable, global_options=global_options, input_options=input_options,
-            inputs=inputs, output_options=output_options, outputs=outputs
+            executable=executable, global_options=global_options, inputs=inputs
         )
 
-    def compile_ff_cmd(self):
-        """Compile FFmpeg command line.
-
-        Creates a list of FFmpeg command line parts ready to be passed to `subprocess.Popen`
-        :return: FFmpeg command line
-        :rtype list
-        """
-        ff_cmd = [self.executable]
-        ff_cmd += self.global_options
-        ff_cmd += self.merge_opts_args(self.input_options, self.inputs, input_option=True)
-        ff_cmd += self.output_options
-        return ff_cmd
-
     def run(self, input_data=None):
-        """Run ffprobe command and convert JSON output to a Python object.
+        """Run ffprobe command and return its output.
 
+        If the command line contains `-print_format json` also parses the JSON output and
+        deserializes it into a dictionary.
         :param str input_data: media (audio, video, transport stream) data as a byte string (e.g. the
             result of reading a file in binary mode)
         :return: dictionary describing the input media
         :rtype: dict
         """
         output = super(FFprobe, self).run(input_data)
-        data = json.loads(output)
+        if '-print_format json' in self.cmd_str:
+            output = json.loads(output)
 
         # TODO: Convert all "numeric" strings to int/float
-        return data
+        return output
