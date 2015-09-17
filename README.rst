@@ -2,7 +2,7 @@
     :target: https://pypi.python.org/pypi/ffmpy
     :alt: Latest version
 
-.. image:: https://img.shields.io/travis/Ch00k/ffmpy/pypi.svg
+.. image:: https://img.shields.io/travis/Ch00k/ffmpy.svg
     :target: https://travis-ci.org/Ch00k/ffmpy
     :alt: Travis-CI
 
