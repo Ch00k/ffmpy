@@ -15,7 +15,7 @@ class FFprobe(FF):
         """Create an instance of FFprobe.
 
         :param str executable: absolute path to ffprobe executable
-        :param str global_options: global options passed to ffmpeg executable
+        :param list, str global_options: global options passed to ffmpeg executable
         :param dict inputs: a dictionary specifying one or more inputs as keys with their
             corresponding options as values
         """
