@@ -13,7 +13,7 @@ class FFmpeg(FF):
         """Create an instance of FFmpeg.
 
         :param str executable: absolute path to ffmpeg executable
-        :param str global_options: global options passed to ffmpeg executable
+        :param list, str global_options: global options passed to ffmpeg executable
         :param dict inputs: a dictionary specifying one or more inputs as keys with their
             corresponding options as values
         :param dict outputs: a dictionary specifying one or more outputs as keys with their

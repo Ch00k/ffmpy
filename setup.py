@@ -1,5 +1,19 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools.command.test import test as TestCommand  # noqa
 from ffmpy import __version__
+
+
+class PyTest(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = ['--verbose']
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+        errcode = pytest.main(self.test_args)
+        raise SystemExit(errcode)
+
 
 setup(
     name='ffmpy',
@@ -9,5 +23,8 @@ setup(
     author='Andriy Yurchuk',
     author_email='ay@mntw.re',
     url='https://github.com/Ch00k/ffmpy',
-    packages=find_packages(),
+    packages=['ffmpy'],
+    platforms='any',
+    tests_require=['pytest'],
+    cmdclass={'test': PyTest},
 )
