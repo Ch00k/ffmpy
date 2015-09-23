@@ -73,7 +73,7 @@ ffmpy can read input from ``STDIN`` and write output to ``STDOUT``. This can be 
 
 .. code:: python
 
-    In [1]: ff = FFmpeg(inputs={'pipe:0': '-f rawvideo -pix_fmt rgb24 -s:v 640x480'}, outputs={'pipe:1': '-v:c h264 -f mp4'})
+    In [1]: ff = FFmpeg(inputs={'pipe:0': '-f rawvideo -pix_fmt rgb24 -s:v 640x480'}, outputs={'pipe:1': '-c:v h264 -f mp4'})
     In [2]: ff.cmd_str
-    Out[2]: 'ffmpeg -f rawvideo -pix_fmt rgb24 -s:v 640x480 -i pipe:0 -v:c h264 -f mp4 pipe:1'
+    Out[2]: 'ffmpeg -f rawvideo -pix_fmt rgb24 -s:v 640x480 -i pipe:0 -c:v h264 -f mp4 pipe:1'
     In [3]: ff.run(input_data=open('/tmp/rawvideo', 'rb').read())
