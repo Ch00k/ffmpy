@@ -123,3 +123,52 @@ class FF(object):
                 "ffmpeg version {0} is not supported. "
                 "Please upgrade to {1}+".format(min_version)
             )
+
+
+def get_supported_formats():
+    """List formats supported by FFmpeg installed on the system.
+
+    Returnds a dictionary containing format short name, format full name and support for the format
+    (D - decoding, E - encoding).
+    :return: dictionary of supported formats
+    :rtype: dict
+    """
+    pattern = re.compile('^\s+(\w+)\s+(\S+)\s+(.*)$')
+    ff = FF(global_options='-formats')
+    output = ff.run()
+    format_strs = output.split('\n')[4:-1]
+    formats = dict()
+    for format_str in format_strs:
+        match = pattern.match(format_str)
+        if not match:
+            raise RuntimeError("Could not match format string: {0}".format(format_str))
+        support, short_name, name = match.groups()
+        formats[short_name] = dict(name=name, support=support)
+    return formats
+
+
+def get_supported_codecs():
+    """List codecs supported by FFmpeg installed on the system.
+
+    Returnds a dictionary containing codec short name, codec full name and support for the codec
+    (D - decoding, E - encoding, one of VAS - video, audio, subtitle, I - intra-frame only,
+    L - lossy compression, S - lossless compression).
+    :return: dictionary of supported codecs
+    :rtype: dict
+    """
+    pattern = re.compile('^\s(\S*)\s(\w+)\s+(.*)$')
+    ff = FF(global_options='-codecs')
+    output = ff.run()
+    codec_strs = output.split('\n')[10:-1]
+    codecs = dict()
+    for codec_str in codec_strs:
+        match = pattern.match(codec_str)
+        if not match:
+            raise RuntimeError("Could not match codec string: {0}".format(codec_str))
+        print(match.groups())
+        support, short_name, name = match.groups()
+        codecs[short_name] = dict(
+            name=name,
+            support=''.join([letter for letter in support if letter != '.'])
+        )
+    return codecs

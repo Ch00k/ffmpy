@@ -26,5 +26,5 @@ setup(
     packages=['ffmpy'],
     platforms='any',
     tests_require=['pytest'],
-    cmdclass={'test': PyTest},
+    cmdclass=dict(test=PyTest),
 )
