@@ -35,7 +35,7 @@ class FFprobe(FF):
         """
         output = super(FFprobe, self).run(input_data)
         if '-print_format json' in self.cmd_str:
-            output = json.loads(output)
+            output = json.loads(output.decode())
 
         # TODO: Convert all "numeric" strings to int/float
         return output
