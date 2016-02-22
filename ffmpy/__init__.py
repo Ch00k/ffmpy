@@ -75,17 +75,23 @@ class FF(object):
             merged.append(arg)
         return merged
 
-    def run(self, input_data=None):
+    def run(self, input_data=None, verbose=False):
         """Runs ffmpeg command and get its output.
 
         :param str input_data: media (audio, video, transport stream) data as a byte string (e.g. the
             result of reading a file in binary mode)
+        :param bool verbose: show ffmpeg output
         :return: output of ffmpeg command as a byte string
         :rtype: str
         :raise: :class:`~.utils.ff.exceptions.FFRuntimeError` in case ffmpeg command fails
 
         """
-        ff_command = Popen(self.cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        stdout = PIPE
+        stderr = PIPE
+        if verbose:
+            stdout = None
+            stderr = None
+        ff_command = Popen(self.cmd, stdin=PIPE, stdout=stdout, stderr=stderr)
         out = ff_command.communicate(input=input_data)
 
         if ff_command.returncode != 0:
