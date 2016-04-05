@@ -23,7 +23,7 @@ setup(
     author='Andriy Yurchuk',
     author_email='ay@mntw.re',
     url='https://github.com/Ch00k/ffmpy',
-    packages=['ffmpy'],
+    py_modules=['ffmpy'],
     platforms='any',
     tests_require=['pytest'],
     cmdclass={'test': PyTest},
