@@ -25,4 +25,4 @@ install:
 before_script:
   - flake8 .
 
-script: py.test tests
+script: PYTHONPATH=. py.test tests  # is setting PYTHONPATH the right thing to do?
