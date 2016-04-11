@@ -3,28 +3,32 @@ from setuptools.command.test import test as TestCommand  # noqa
 from ffmpy import __version__
 
 
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = ['--verbose']
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-        errcode = pytest.main(self.test_args)
-        raise SystemExit(errcode)
-
-
 setup(
     name='ffmpy',
     version=__version__,
-    description='A simple Python wrapper around ffmpeg',
+    description='A simple Python wrapper for ffmpeg',
     long_description=open('README.rst').read(),
     author='Andriy Yurchuk',
     author_email='ay@mntw.re',
+    license='MIT',
     url='https://github.com/Ch00k/ffmpy',
     py_modules=['ffmpy'],
     platforms='any',
-    tests_require=['pytest'],
-    cmdclass={'test': PyTest},
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.0',
+        'Programming Language :: Python :: 3.1',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Multimedia :: Sound/Audio'
+    ],
+    keywords='ffmpeg ffprobe wrapper'
 )
