@@ -13,13 +13,9 @@ python:
   - "pypy3"
   - "pypy"
 
-#before_install:
-  #- pip install -U pip
-
 install:
   - pip install -U -r dev-requirements.txt
   - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install ordereddict; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U virtualenv<14.0.0; fi
 
 before_script:
   - flake8 .
