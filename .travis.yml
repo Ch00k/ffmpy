@@ -13,8 +13,8 @@ python:
   - "pypy3"
   - "pypy"
 
-before_install:
-  - pip install -U pip
+#before_install:
+  #- pip install -U pip
 
 install:
   - pip install -U -r dev-requirements.txt
