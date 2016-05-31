@@ -21,6 +21,19 @@ You guessed it::
 
     ~$ pip install ffmpy
 
+Quick example
+-------------
+::
+
+  import ffmpy
+  ff = ffmpy.FFmpeg(
+      inputs={'input.mp4': None},
+      outputs={'output.avi': None}
+  )
+  ff.run()
+
+This will change the video format from MP4 to AVI without changing any other video parameters.
+
 Documentation
 -------------
 http://ffmpy.readthedocs.io/en/latest

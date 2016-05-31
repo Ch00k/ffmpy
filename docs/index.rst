@@ -30,8 +30,7 @@ Quickstart
   )
   ff.run()
 
-This will change the video format from MP4 to AVI without changing any other video
-parameters.
+This will change the video format from MP4 to AVI without changing any other video parameters.
 
 
 Documentation
