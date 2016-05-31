@@ -1,7 +1,6 @@
 import errno
-import json
 import shlex
-from subprocess import Popen, PIPE, list2cmdline
+import subprocess
 
 
 __version__ = '0.1.0'
@@ -13,9 +12,9 @@ class FFmpeg(object):
     """
 
     def __init__(self, executable='ffmpeg', global_options='', inputs=None, outputs=None):
-        """Initialize wrapper class.
+        """Initialize wrapper object.
 
-        Compiles FFmpegg command like from passed arguments (executable path, options, inputs and
+        Compiles FFmpegg command line from passed arguments (executable path, options, inputs and
         outputs). FFmpeg executable by default is taken from ``PATH`` but can be overridden with an
         absolute path. For more info about FFmpeg command line format see
         `here <https://ffmpeg.org/ffmpeg.html#Synopsis>`_.
@@ -30,52 +29,54 @@ class FFmpeg(object):
             corresponding options as values
         """
         self.executable = executable
-        self.cmd = [executable]
-        if not self._is_sequence(global_options):
+        self._cmd = [executable]
+        if not _is_sequence(global_options):
             global_options = shlex.split(global_options)
-        self.cmd += global_options
-        self.cmd += self._merge_args_opts(inputs, input_option=True)
-        self.cmd += self._merge_args_opts(outputs)
-        self.cmd_str = list2cmdline(self.cmd)
+        self._cmd += global_options
+        self._cmd += self._merge_args_opts(inputs, add_input_option=True)
+        self._cmd += self._merge_args_opts(outputs)
+        self.cmd = subprocess.list2cmdline(self._cmd)
 
     def __repr__(self):
-        return '<%s %r>' % (self.__class__.__name__, self.cmd_str)
-
-    def _is_sequence(self, obj):
-        """Check if the object is an iterable type.
-
-        :param object obj: an object to be checked
-        :return: True if the object is iterable but is not a string, False otherwise
-        :rtype: bool
-        """
-        return hasattr(obj, '__iter__') and not isinstance(obj, str)
+        return '<{0!r} {1!r}>'.format(self.__class__.__name__, self.cmd)
 
     def _merge_args_opts(self, args_opts_dict, **kwargs):
-        """Merge input/output options with corresponding input/output arguments
+        """Merge options with their corresponding arguments.
 
         Iterates over the dictionary holding arguments (keys) and options (values). Merges each
         options string with its corresponding argument.
+
         :param dict args_opts_dict: a dictionary of arguments and options
-        :param dict kwargs: *input_option* - if specified prepends `-i` to input argument
-        :return: merged list of arguments with their respective options
+        :param dict kwargs: *input_option* - if specified prepends ``-i`` to input argument
+        :return: merged list of strings with arguments and their corresponding options
         :rtype: list
         """
         merged = []
+
         if not args_opts_dict:
             return merged
+
         for arg, opt in args_opts_dict.items():
-            if not self._is_sequence(opt):
+            if not _is_sequence(opt):
                 opt = shlex.split(opt or '')
             merged += opt
+
             if not arg:
                 continue
-            if 'input_option' in kwargs:
+            if 'add_input_option' in kwargs:
                 merged.append('-i')
+
             merged.append(arg)
+
         return merged
 
     def run(self, input_data=None, verbose=False):
         """Run ffmpeg command and get its output.
+
+        If ``pipe`` protocol is used for input, `input_data` should contain data to be passed as
+        input to ``STDIN``. If ``pipe`` protocol is used for output, output data will be read from
+        ``STDOUT`` and returned. More infor about ``pipe`` protocol `here
+        <https://ffmpeg.org/ffmpeg-protocols.html#pipe>`_.
 
         :param str input_data: media (audio, video, transport stream) data as a byte string (e.g. the
             result of reading a file in binary mode)
@@ -87,10 +88,15 @@ class FFmpeg(object):
         if verbose:
             stdout = stderr = None
         else:
-            stdout = stderr = PIPE
+            stdout = stderr = subprocess.PIPE
 
         try:
-            ff_command = Popen(self.cmd, stdin=PIPE, stdout=stdout, stderr=stderr)
+            ff_command = subprocess.Popen(
+                self._cmd,
+                stdin=subprocess.PIPE,
+                stdout=stdout,
+                stderr=stderr
+            )
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise FFExecutableNotFoundError("Executable '{0}' not found".format(self.executable))
@@ -98,22 +104,29 @@ class FFmpeg(object):
         out = ff_command.communicate(input=input_data)
         if ff_command.returncode != 0:
             raise FFRuntimeError(
-                "ffmpeg call '{0}' exited with status {1}\n{2}".format(
-                    self.cmd_str, ff_command.returncode, out[1])
+                "'{cmd}' exited with status {exit_code}\n\n{out}".format(
+                    cmd=self.cmd,
+                    exit_code=ff_command.returncode,
+                    out=out[1]
+                )
             )
-        return out[0]
+
+        if out[0]:
+            return out[0]
+        else:
+            return None
 
 
 class FFprobe(FFmpeg):
-    """
-    Wrapper for `ffprobe <https://www.ffmpeg.org/ffprobe.html>`_.
-
-    Utilizes ffmpeg `pipe protocol <https://www.ffmpeg.org/ffmpeg-protocols.html#pipe>`_. Input data
-    (as a byte string) is passed to ffprobe on standard input. Result is presented in JSON format.
-    """
+    """Wrapper for `ffprobe <https://www.ffmpeg.org/ffprobe.html>`_."""
 
     def __init__(self, executable='ffprobe', global_options='', inputs=None):
         """Create an instance of FFprobe.
+
+        Compiles FFprobe command line from passed arguments (executable path, options, inputs).
+        FFprobe executable by default is taken from ``PATH`` but can be overridden with an
+        absolute path. For more info about FFprobe command line format see
+        `here <https://ffmpeg.org/ffprobe.html#Synopsis>`_.
 
         :param str executable: absolute path to ffprobe executable
         :param list, str global_options: global options passed to ffmpeg executable
@@ -121,26 +134,10 @@ class FFprobe(FFmpeg):
             corresponding options as values
         """
         super(FFprobe, self).__init__(
-            executable=executable, global_options=global_options, inputs=inputs
+            executable=executable,
+            global_options=global_options,
+            inputs=inputs
         )
-
-    def run(self, input_data=None):
-        """Run ffprobe command and return its output.
-
-        If the command line contains `-print_format json` also parses the JSON output and
-        deserializes it into a dictionary.
-
-        :param str input_data: media (audio, video, transport stream) data as a byte string (e.g. the
-            result of reading a file in binary mode)
-        :return: dictionary describing the input media
-        :rtype: dict
-        """
-        output = super(FFprobe, self).run(input_data)
-        if '-print_format json' in self.cmd_str:
-            output = json.loads(output.decode())
-
-        # TODO: Convert all "numeric" strings to int/float
-        return output
 
 
 class FFExecutableNotFoundError(Exception):
@@ -149,3 +146,13 @@ class FFExecutableNotFoundError(Exception):
 
 class FFRuntimeError(Exception):
     """Raise when FFmpeg/FFprobe run fails."""
+
+
+def _is_sequence(obj):
+    """Check if the object is a sequence (list, tuple etc.).
+
+    :param object obj: an object to be checked
+    :return: True if the object is iterable but is not a string, False otherwise
+    :rtype: bool
+    """
+    return hasattr(obj, '__iter__') and not isinstance(obj, str)
