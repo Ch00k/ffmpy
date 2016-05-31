@@ -6,6 +6,10 @@
     :target: https://travis-ci.org/Ch00k/ffmpy
     :alt: Travis-CI
 
+.. image:: https://readthedocs.org/projects/ffmpy/badge/?version=latest
+    :target: http://ffmpy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 
 ffmpy
 =====
@@ -19,4 +23,4 @@ You guessed it::
 
 Documentation
 -------------
-
+http://ffmpy.readthedocs.io/en/latest
