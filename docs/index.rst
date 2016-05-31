@@ -32,7 +32,6 @@ Quickstart
 
 This take ``input.mp4`` file in the current directory as the input, change the video container from MP4 to AVI without changing any other video parameters and create a new output file ``output.avi`` in the current directory.
 
-
 Documentation
 -------------
 .. toctree::
