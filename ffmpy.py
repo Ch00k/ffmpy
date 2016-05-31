@@ -22,7 +22,8 @@ class FFmpeg(object):
         :param str executable: ffmpeg executable; can either be ``ffmpeg`` command that will be found
             in ``PATH`` (the default) or an absolute path to ``ffmpeg`` executable
         :param iterable global_options: global options passed to ``ffmpeg`` executable (e.g.
-            ``-y``, ``-v`` etc.)
+            ``-y``, ``-v`` etc.); can be specified either as a list/tuple of strings, or a
+            space-separated string
         :param dict inputs: a dictionary specifying one or more inputs as keys with their
             corresponding options as values
         :param dict outputs: a dictionary specifying one or more outputs as keys with their
@@ -129,7 +130,8 @@ class FFprobe(FFmpeg):
         `here <https://ffmpeg.org/ffprobe.html#Synopsis>`_.
 
         :param str executable: absolute path to ffprobe executable
-        :param list, str global_options: global options passed to ffmpeg executable
+        :param iterable global_options: global options passed to ffmpeg executable; can be specified
+            either as a list/tuple of strings or a space-separated string
         :param dict inputs: a dictionary specifying one or more inputs as keys with their
             corresponding options as values
         """
