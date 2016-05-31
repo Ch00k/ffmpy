@@ -32,7 +32,7 @@ Quick example
   )
   ff.run()
 
-This will change the video format of the ``input.mp4`` file in the current directory from MP4 to AVI without changing any other video parameters, creating a new file ``output.avi`` in the current directory.
+This take ``input.mp4`` file in the current directory as the input, change the video container from MP4 to AVI without changing any other video parameters and create a new output file ``output.avi`` in the current directory.
 
 Documentation
 -------------
