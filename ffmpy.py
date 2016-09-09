@@ -71,7 +71,7 @@ class FFmpeg(object):
 
         return merged
 
-    def run(self, input_data=None, verbose=False):
+    def run(self, input_data=None, verbose=False, return_stderr=False):
         """Run ffmpeg command and get its output.
 
         If ``pipe`` protocol is used for input, `input_data` should contain data to be passed as
@@ -114,6 +114,8 @@ class FFmpeg(object):
 
         if out[0]:
             return out[0]
+        if out[1] and return_stderr is True:
+            return out[1]
         else:
             return None
 
