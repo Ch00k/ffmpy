@@ -1,9 +1,6 @@
 from ffmpy import FFmpeg
 
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
+from collections import OrderedDict
 
 
 def test_default():
