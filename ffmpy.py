@@ -3,7 +3,7 @@ import shlex
 import subprocess
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 class FFmpeg(object):
@@ -112,10 +112,7 @@ class FFmpeg(object):
                 )
             )
 
-        if out[0]:
-            return out[0]
-        else:
-            return None
+        return out
 
 
 class FFprobe(FFmpeg):
