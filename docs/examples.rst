@@ -65,14 +65,15 @@ There are cases where the order of inputs and outputs must be preserved (e.g. wh
     >>> ffmpeg -i video.mp4 -i audio_1.mp3 -i audio_2.mp3 -map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2 output.ts
     ff.run()
 
-ffmpy can read input from ``STDIN`` and write output to ``STDOUT``. This can be achieved by using ffmpeg's `pipe <https://www.ffmpeg.org/ffmpeg-protocols.html#pipe>`_ protocol. The following example reads data from a file containing raw video frames in RGB format and passes it to ffmpy on ``STDIN``; ffmpy in its turn will encode raw frame data with H.264 and pack it in an MP4 container passing the output to ``STDOUT``:
+`ffmpy` can read input from ``STDIN`` and write output to ``STDOUT``. This can be achieved by using ffmpeg's `pipe <https://www.ffmpeg.org/ffmpeg-protocols.html#pipe>`_ protocol. The following example reads data from a file containing raw video frames in RGB format and passes it to `ffmpy` on ``STDIN``; `ffmpy` in its turn will encode raw frame data with H.264 and pack it in an MP4 container passing the output to ``STDOUT`` (note that you must redirect ``STDOUT`` of the process to a pipe by specifiying ``stdout=PIPE``, otherwise the output will get lost):
 
 .. code:: python
 
+    from ffmpy import FFmpeg, PIPE
     ff = FFmpeg(
         inputs={'pipe:0': '-f rawvideo -pix_fmt rgb24 -s:v 640x480'},
         outputs={'pipe:1': '-c:v h264 -f mp4'}
     )
     ff.cmd
     >>> ffmpeg -f rawvideo -pix_fmt rgb24 -s:v 640x480 -i pipe:0 -c:v h264 -f mp4 pipe:1'
-    data = ff.run(input_data=open('rawvideo', 'rb').read())
+    stdout, stderr = ff.run(input_data=open('rawvideo', 'rb').read(), stdout=PIPE)

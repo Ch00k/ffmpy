@@ -23,7 +23,7 @@ You guessed it::
 
 Quick example
 -------------
-::
+.. code:: python
 
   import ffmpy
   ff = ffmpy.FFmpeg(

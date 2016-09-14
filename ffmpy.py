@@ -3,94 +3,77 @@ import shlex
 import subprocess
 
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 
 
 class FFmpeg(object):
-    """Wrapper for various `ffmpeg <https://www.ffmpeg.org/>`_ related applications (ffmpeg,
+    """Wrapper for various `FFmpeg <https://www.ffmpeg.org/>`_ related applications (ffmpeg,
     ffprobe).
     """
 
     def __init__(self, executable='ffmpeg', global_options='', inputs=None, outputs=None):
-        """Initialize wrapper object.
+        """Initialize FFmpeg command line wrapper.
 
         Compiles FFmpegg command line from passed arguments (executable path, options, inputs and
-        outputs). FFmpeg executable by default is taken from ``PATH`` but can be overridden with an
-        absolute path. For more info about FFmpeg command line format see
-        `here <https://ffmpeg.org/ffmpeg.html#Synopsis>`_.
+        outputs). For more info about FFmpeg command line format see `here
+        <https://ffmpeg.org/ffmpeg.html#Synopsis>`_.
 
-        :param str executable: ffmpeg executable; can either be ``ffmpeg`` command that will be found
-            in ``PATH`` (the default) or an absolute path to ``ffmpeg`` executable
+        :param str executable: path to ffmpeg executable; by default the ``ffmpeg`` command will be
+            searched for in the ``PATH``, but can be overridden with an absolute path to ``ffmpeg``
+            executable
         :param iterable global_options: global options passed to ``ffmpeg`` executable (e.g.
-            ``-y``, ``-v`` etc.); can be specified either as a list/tuple of strings, or a
-            space-separated string
-        :param dict inputs: a dictionary specifying one or more inputs as keys with their
-            corresponding options as values
-        :param dict outputs: a dictionary specifying one or more outputs as keys with their
-            corresponding options as values
+            ``-y``, ``-v`` etc.); can be specified either as a list/tuple/set of strings, or one
+            space-separated string; by default no global options are passed
+        :param dict inputs: a dictionary specifying one or more input arguments as keys with their
+            corresponding options (either as a list of strings or a single space separated string) as
+            values
+        :param dict outputs: a dictionary specifying one or more output arguments as keys with their
+            corresponding options (either as a list of strings or a single space separated string) as
+            values
         """
         self.executable = executable
         self._cmd = [executable]
+
         if not _is_sequence(global_options):
             global_options = shlex.split(global_options)
+
         self._cmd += global_options
-        self._cmd += self._merge_args_opts(inputs, add_input_option=True)
-        self._cmd += self._merge_args_opts(outputs)
+        self._cmd += _merge_args_opts(inputs, add_input_option=True)
+        self._cmd += _merge_args_opts(outputs)
+
         self.cmd = subprocess.list2cmdline(self._cmd)
 
     def __repr__(self):
         return '<{0!r} {1!r}>'.format(self.__class__.__name__, self.cmd)
 
-    def _merge_args_opts(self, args_opts_dict, **kwargs):
-        """Merge options with their corresponding arguments.
+    def run(self, input_data=None, stdout=None, stderr=None):
+        """Execute FFmpeg command line.
 
-        Iterates over the dictionary holding arguments (keys) and options (values). Merges each
-        options string with its corresponding argument.
+        ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
+        ``stdout`` and ``stderr`` specify where to redirect the ``stdout`` and ``stderr`` of the
+        process. By default no redirection is done, which means all output goes to running shell
+        (this mode should normally only be used for debugging purposes). If FFmpeg ``pipe`` protocol
+        is used for output, ``stdout`` must be redirected to a pipe by passing `subprocess.PIPE` as
+        ``stdout`` argument.
 
-        :param dict args_opts_dict: a dictionary of arguments and options
-        :param dict kwargs: *input_option* - if specified prepends ``-i`` to input argument
-        :return: merged list of strings with arguments and their corresponding options
-        :rtype: list
+        Returns a 2-tuple containing ``stdout`` and ``stderr`` of the process. If there was no
+        redirection or if the output was redirected to e.g. `os.devnull`, the value returned will
+        be a tuple of two `None` values, otherwise it will contain the actual ``stdout`` and
+        ``stderr`` data returned by ffmpeg process.
+
+        More info about ``pipe`` protocol `here <https://ffmpeg.org/ffmpeg-protocols.html#pipe>`_.
+
+        :param str input_data: input data for FFmpeg to deal with (audio, video etc.) as bytes (e.g.
+            the result of reading a file in binary mode)
+        :param stdout: redirect FFmpeg ``stdout`` there (default is `None` which means no
+            redirection)
+        :param stderr: redirect FFmpeg ``stderr`` there (default is `None` which means no
+            redirection)
+        :return: a 2-tuple containing ``stdout`` and ``stderr`` of the process
+        :rtype: tuple
+        :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
+            `FFExecutableNotFoundError` in case the executable path passed was not valid
         """
-        merged = []
-
-        if not args_opts_dict:
-            return merged
-
-        for arg, opt in args_opts_dict.items():
-            if not _is_sequence(opt):
-                opt = shlex.split(opt or '')
-            merged += opt
-
-            if not arg:
-                continue
-            if 'add_input_option' in kwargs:
-                merged.append('-i')
-
-            merged.append(arg)
-
-        return merged
-
-    def run(self, input_data=None, verbose=False):
-        """Run ffmpeg command and get its output.
-
-        If ``pipe`` protocol is used for input, `input_data` should contain data to be passed as
-        input to ``STDIN``. If ``pipe`` protocol is used for output, output data will be read from
-        ``STDOUT`` and returned. More infor about ``pipe`` protocol `here
-        <https://ffmpeg.org/ffmpeg-protocols.html#pipe>`_.
-
-        :param str input_data: media (audio, video, transport stream) data as a byte string (e.g. the
-            result of reading a file in binary mode)
-        :param bool verbose: show ffmpeg output
-        :return: output of ffmpeg command as a byte string
-        :rtype: str
-        :raise: :class:`~.utils.ff.exceptions.FFRuntimeError` in case ffmpeg command fails
-        """
-        if verbose:
-            stdout = stderr = None
-        else:
-            stdout = stderr = subprocess.PIPE
-
         try:
             ff_command = subprocess.Popen(
                 self._cmd,
@@ -104,13 +87,7 @@ class FFmpeg(object):
 
         out = ff_command.communicate(input=input_data)
         if ff_command.returncode != 0:
-            raise FFRuntimeError(
-                "'{cmd}' exited with status {exit_code}\n\n{out}".format(
-                    cmd=self.cmd,
-                    exit_code=ff_command.returncode,
-                    out=out[1]
-                )
-            )
+            raise FFRuntimeError(self.cmd, ff_command.returncode, out[0], out[1])
 
         return out
 
@@ -140,11 +117,30 @@ class FFprobe(FFmpeg):
 
 
 class FFExecutableNotFoundError(Exception):
-    """Raise when ffmpeg/ffprobe executable was not found"""
+    """Raise when ffmpeg/ffprobe executable was not found."""
 
 
 class FFRuntimeError(Exception):
-    """Raise when FFmpeg/FFprobe run fails."""
+    """Raise when FFmpeg/FFprobe command line execution returns a non-zero exit code.
+
+    The resulting exception object will contain the attributes relates to command line execution:
+    ``cmd``, ``exit_code``, ``stdout``, ``stderr``.
+    """
+
+    def __init__(self, cmd, exit_code, stdout, stderr):
+        self.cmd = cmd
+        self.exit_code = exit_code
+        self.stdout = stdout
+        self.stderr = stderr
+
+        message = "'{0}' exited with status {1}\n\nSTDOUT:\n{2}\n\nSTDERR:\n{3}".format(
+            self.cmd,
+            exit_code,
+            stdout.decode() or '',
+            stderr.decode() or ''
+        )
+
+        super(FFRuntimeError, self).__init__(message)
 
 
 def _is_sequence(obj):
@@ -155,3 +151,35 @@ def _is_sequence(obj):
     :rtype: bool
     """
     return hasattr(obj, '__iter__') and not isinstance(obj, str)
+
+
+def _merge_args_opts(args_opts_dict, **kwargs):
+    """Merge options with their corresponding arguments.
+
+    Iterates over the dictionary holding arguments (keys) and options (values). Merges each
+    options string with its corresponding argument.
+
+    :param dict args_opts_dict: a dictionary of arguments and options
+    :param dict kwargs: *input_option* - if specified prepends ``-i`` to input argument
+    :return: merged list of strings with arguments and their corresponding options
+    :rtype: list
+    """
+    merged = []
+
+    if not args_opts_dict:
+        return merged
+
+    for arg, opt in args_opts_dict.items():
+        if not _is_sequence(opt):
+            opt = shlex.split(opt or '')
+        merged += opt
+
+        if not arg:
+            continue
+
+        if 'add_input_option' in kwargs:
+            merged.append('-i')
+
+        merged.append(arg)
+
+    return merged
