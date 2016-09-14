@@ -84,6 +84,8 @@ class FFmpeg(object):
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise FFExecutableNotFoundError("Executable '{0}' not found".format(self.executable))
+            else:
+                raise
 
         out = ff_command.communicate(input=input_data)
         if ff_command.returncode != 0:
