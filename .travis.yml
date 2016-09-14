@@ -17,4 +17,4 @@ install:
 before_script:
   - flake8 .
 
-script: PATH=./tests/ffmpeg PYTHONPATH=. py.test tests  # is setting PYTHONPATH the right thing to do?
+script: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests  # is setting PYTHONPATH the right thing to do?
