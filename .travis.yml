@@ -13,9 +13,8 @@ python:
 
 install:
   - pip install -U -r dev-requirements.txt
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install ordereddict; fi
 
 before_script:
   - flake8 .
 
-script: PYTHONPATH=. py.test tests  # is setting PYTHONPATH the right thing to do?
+script: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests  # is setting PYTHONPATH the right thing to do?
