@@ -10,7 +10,8 @@ from ffmpy import FFmpeg
     [
         '-hide_banner -y -v debug',
         ['-hide_banner', '-y', '-v', 'debug'],
-        ('-hide_banner', '-y', '-v', 'debug')
+        ('-hide_banner', '-y', '-v', 'debug'),
+        ['-hide_banner -y', '-v debug']
     ]
 )
 def test_global_options(global_options):
@@ -73,3 +74,20 @@ def test_input_options_output_options_none():
     assert ff.cmd == (
         'ffmpeg -i /tmp/rawvideo -f mp4 -i /tmp/video.mp4 -f rawvideo /tmp/rawvideo /tmp/video.mp4'
     )
+
+
+def test_quoted_option():
+    inputs = {'input.ts': None}
+    quoted_option = (
+        "drawtext="
+        "fontfile=/Library/Fonts/Verdana.ttf: "
+        "timecode='09\:57\:00\:00': "
+        "r=25: x=(w-tw)/2: y=h-(2*lh): "
+        "fontcolor=white: box=1: "
+        "boxcolor=0x00000000@1"
+    )
+
+    outputs = {'output.ts': ['-vf', quoted_option, '-an']}
+    ff = FFmpeg(inputs=inputs, outputs=outputs)
+    assert ff._cmd == ['ffmpeg', '-i', 'input.ts', '-vf', quoted_option, '-an', 'output.ts']
+    assert ff.cmd == 'ffmpeg -i input.ts -vf "{0}" -an output.ts'.format(quoted_option)

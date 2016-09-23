@@ -3,7 +3,7 @@ import shlex
 import subprocess
 
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 class FFmpeg(object):
@@ -11,11 +11,18 @@ class FFmpeg(object):
     ffprobe).
     """
 
-    def __init__(self, executable='ffmpeg', global_options='', inputs=None, outputs=None):
+    def __init__(self, executable='ffmpeg', global_options=None, inputs=None, outputs=None):
         """Initialize FFmpeg command line wrapper.
 
-        Compiles FFmpegg command line from passed arguments (executable path, options, inputs and
-        outputs). For more info about FFmpeg command line format see `here
+        Compiles FFmpeg command line from passed arguments (executable path, options, inputs and
+        outputs). ``inputs`` and ``outputs`` are dictionares containing inputs/outputs as keys and
+        their respective options as values. One dictionary value (set of options) must be either a
+        single space separated string, or a list or strings without spaces (i.e. each part of the
+        option is a separate item of the list, the result of calling ``split()`` on the options
+        string). If the value is a list, it cannot be mixed, i.e. cannot contain items with spaces.
+        An exception are complex FFmpeg command lines that contain quotes: the quoted part must be
+        one string, even if it contains spaces (see *Examples* for more info).
+        For more info about FFmpeg command line format see `here
         <https://ffmpeg.org/ffmpeg.html#Synopsis>`_.
 
         :param str executable: path to ffmpeg executable; by default the ``ffmpeg`` command will be
@@ -34,10 +41,15 @@ class FFmpeg(object):
         self.executable = executable
         self._cmd = [executable]
 
-        if not _is_sequence(global_options):
-            global_options = shlex.split(global_options)
+        global_options = global_options or []
+        if _is_sequence(global_options):
+            normalized_global_options = []
+            for opt in global_options:
+                normalized_global_options += shlex.split(opt)
+        else:
+            normalized_global_options = shlex.split(global_options)
 
-        self._cmd += global_options
+        self._cmd += normalized_global_options
         self._cmd += _merge_args_opts(inputs, add_input_option=True)
         self._cmd += _merge_args_opts(outputs)
 
@@ -119,7 +131,7 @@ class FFprobe(FFmpeg):
 
 
 class FFExecutableNotFoundError(Exception):
-    """Raise when ffmpeg/ffprobe executable was not found."""
+    """Raise when FFmpeg/FFprobe executable was not found."""
 
 
 class FFRuntimeError(Exception):
@@ -135,11 +147,11 @@ class FFRuntimeError(Exception):
         self.stdout = stdout
         self.stderr = stderr
 
-        message = "'{0}' exited with status {1}\n\nSTDOUT:\n{2}\n\nSTDERR:\n{3}".format(
+        message = "`{0}` exited with status {1}\n\nSTDOUT:\n{2}\n\nSTDERR:\n{3}".format(
             self.cmd,
             exit_code,
-            stdout.decode() or '',
-            stderr.decode() or ''
+            (stdout or b'').decode(),
+            (stderr or b'').decode()
         )
 
         super(FFRuntimeError, self).__init__(message)

@@ -63,7 +63,7 @@ def test_non_zero_exitcode():
     assert exc_info.value.stdout == b'These are\nmultiple lines\nprinted to stdout'
     assert exc_info.value.stderr == b'These are\nmultiple lines\nprinted to stderr'
     assert str(exc_info.value) == (
-        "'ffmpeg --stdin none --stdout multiline --stderr multiline --exitcode 42' "
+        "`ffmpeg --stdin none --stdout multiline --stderr multiline --exitcode 42` "
         'exited with status 42\n\n'
         'STDOUT:\n'
         'These are\n'
@@ -89,7 +89,7 @@ def test_non_zero_exitcode_no_stderr():
     assert exc_info.value.stdout == b'These are\nmultiple lines\nprinted to stdout'
     assert exc_info.value.stderr == b''
     assert str(exc_info.value) == (
-        "'ffmpeg --stdin none --stdout multiline --stderr none --exitcode 42' "
+        "`ffmpeg --stdin none --stdout multiline --stderr none --exitcode 42` "
         'exited with status 42\n\n'
         'STDOUT:\n'
         'These are\n'
@@ -112,7 +112,7 @@ def test_non_zero_exitcode_no_stdout():
     assert exc_info.value.stdout == b''
     assert exc_info.value.stderr == b'These are\nmultiple lines\nprinted to stderr'
     assert str(exc_info.value) == (
-        "'ffmpeg --stdin none --stdout none --stderr multiline --exitcode 42' "
+        "`ffmpeg --stdin none --stdout none --stderr multiline --exitcode 42` "
         'exited with status 42\n\n'
         'STDOUT:\n'
         '\n\n'
@@ -136,7 +136,22 @@ def test_non_zero_exitcode_no_stdout_and_stderr():
     assert exc_info.value.stdout == b''
     assert exc_info.value.stderr == b''
     assert str(exc_info.value) == (
-        "'ffmpeg --stdin none --stdout none --stderr none --exitcode 42' "
+        "`ffmpeg --stdin none --stdout none --stderr none --exitcode 42` "
+        'exited with status 42\n\n'
+        'STDOUT:\n'
+        '\n\n'
+        'STDERR:\n'
+    )
+
+
+def test_raise_exception_with_stdout_stderr_none():
+    global_options = '--stdin none --stdout none --stderr none --exitcode 42'
+    ff = FFmpeg(global_options=global_options)
+    with pytest.raises(FFRuntimeError) as exc_info:
+        ff.run()
+
+    assert str(exc_info.value) == (
+        "`ffmpeg --stdin none --stdout none --stderr none --exitcode 42` "
         'exited with status 42\n\n'
         'STDOUT:\n'
         '\n\n'
