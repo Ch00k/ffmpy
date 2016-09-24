@@ -23,12 +23,12 @@ Quickstart
 ----------
 ::
 
-  import ffmpy
-  ff = ffmpy.FFmpeg(
-      inputs={'input.mp4': None},
-      outputs={'output.avi': None}
-  )
-  ff.run()
+  >>> import ffmpy
+  >>> ff = ffmpy.FFmpeg(
+  ...     inputs={'input.mp4': None},
+  ...     outputs={'output.avi': None}
+  ... )
+  >>> ff.run()
 
 This takes ``input.mp4`` file in the current directory as the input, changes the video container from MP4 to AVI without changing any other video parameters and creates a new output file ``output.avi`` in the current directory.
 
