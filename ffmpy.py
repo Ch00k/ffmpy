@@ -3,7 +3,7 @@ import shlex
 import subprocess
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 class FFmpeg(object):
@@ -54,6 +54,7 @@ class FFmpeg(object):
         self._cmd += _merge_args_opts(outputs)
 
         self.cmd = subprocess.list2cmdline(self._cmd)
+        self.process = None
 
     def __repr__(self):
         return '<{0!r} {1!r}>'.format(self.__class__.__name__, self.cmd)
@@ -87,7 +88,7 @@ class FFmpeg(object):
             `FFExecutableNotFoundError` in case the executable path passed was not valid
         """
         try:
-            ff_command = subprocess.Popen(
+            self.process = subprocess.Popen(
                 self._cmd,
                 stdin=subprocess.PIPE,
                 stdout=stdout,
@@ -99,9 +100,9 @@ class FFmpeg(object):
             else:
                 raise
 
-        out = ff_command.communicate(input=input_data)
-        if ff_command.returncode != 0:
-            raise FFRuntimeError(self.cmd, ff_command.returncode, out[0], out[1])
+        out = self.process.communicate(input=input_data)
+        if self.process.returncode != 0:
+            raise FFRuntimeError(self.cmd, self.process.returncode, out[0], out[1])
 
         return out
 

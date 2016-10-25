@@ -30,28 +30,46 @@ func main() {
 		os.Exit(0)
 	}
 
-	stdin := args[1]
-	stdout := args[3]
-	stderr := args[5]
-	exitCode := args[7]
+	var stdIn, stdOut, stdErr, exitCode string
+	longRun := false
 
-	if stdin == "pipe" {
+	for i, arg := range args {
+		switch arg {
+		case "--stdin":
+			stdIn = args[i+1]
+		case "--stdout":
+			stdOut = args[i+1]
+		case "--stderr":
+			stdErr = args[i+1]
+		case "--exit-code":
+			exitCode = args[i+1]
+		case "--long-run":
+			longRun = true
+		}
+	}
+
+	if stdIn == "pipe" {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
 			fmt.Fprintln(os.Stdout, scanner.Text())
 		}
 	}
 
-	if stdout == "oneline" {
+	if stdOut == "oneline" {
 		printStdoutOneline()
-	} else if stdout == "multiline" {
+	} else if stdOut == "multiline" {
 		printStdoutMultiline()
 	}
 
-	if stderr == "oneline" {
+	if stdErr == "oneline" {
 		printStderrOneline()
-	} else if stderr == "multiline" {
+	} else if stdErr == "multiline" {
 		printStderrMultiline()
+	}
+
+	if longRun {
+		for {
+		}
 	}
 
 	code, _ := strconv.Atoi(exitCode)
