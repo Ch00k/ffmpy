@@ -83,7 +83,7 @@ A more complex usage example would be demultiplexing an MPEG transport stream in
 
         >>>
 
-        Notice how the actual ``FFmpeg`` command line contains unnecessary quotes.
+Notice how the actual ``FFmpeg`` command line contains unnecessary quotes.
 
 Multiplexing
 ------------
