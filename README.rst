@@ -39,3 +39,7 @@ Documentation
 http://ffmpy.readthedocs.io/en/latest
 
 See `Examples <http://ffmpy.readthedocs.io/en/latest/examples.html>`_ section for usage examples.
+
+License
+-------
+ffmpy is licensed under the terms of MIT license
