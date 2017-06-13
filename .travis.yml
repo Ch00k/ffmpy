@@ -9,13 +9,13 @@ python:
   - "3.4"
   - "3.3"
   - "2.7"
-  - "pypy3"
+  - "pypy3.3-5.5-alpha"
   - "pypy"
 
 install:
   - pip install -U -r dev-requirements.txt
 
-#before_script:
-#  - flake8 .
+before_script:
+  - flake8 .
 
 script: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests  # is setting PYTHONPATH the right thing to do?
