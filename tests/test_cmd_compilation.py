@@ -91,3 +91,12 @@ def test_quoted_option():
     ff = FFmpeg(inputs=inputs, outputs=outputs)
     assert ff._cmd == ['ffmpeg', '-i', 'input.ts', '-vf', quoted_option, '-an', 'output.ts']
     assert ff.cmd == 'ffmpeg -i input.ts -vf "{0}" -an output.ts'.format(quoted_option)
+
+
+def test_path_with_spaces():
+    inputs = {'/home/ay/file with spaces': None}
+    outputs = {'output.ts': None}
+
+    ff = FFmpeg(inputs=inputs, outputs=outputs)
+    assert ff._cmd == ['ffmpeg', '-i', '/home/ay/file with spaces', 'output.ts']
+    assert ff.cmd == 'ffmpeg -i "/home/ay/file with spaces" output.ts'
