@@ -1,5 +1,3 @@
 tox
 flake8
 pytest
-sphinx
-sphinx_rtd_theme

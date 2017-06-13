@@ -36,7 +36,7 @@ This will take ``input.mp4`` file in the current directory as the input, change 
 
 Documentation
 -------------
-http://ffmpy.readthedocs.io/en/latest
+http://ffmpy.rtfd.io
 
 See `Examples <http://ffmpy.readthedocs.io/en/latest/examples.html>`_ section for usage examples.
 
