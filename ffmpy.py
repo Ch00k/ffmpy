@@ -88,7 +88,7 @@ class FFmpeg(object):
         :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
             `FFExecutableNotFoundError` in case the executable path passed was not valid
         """
-        if input_data != None or stdin == None:
+        if input_data is not None or stdin is None:
             stdin = subprocess.PIPE
 
         try:
