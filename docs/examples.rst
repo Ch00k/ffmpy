@@ -110,7 +110,9 @@ There are cases where the order of inputs and outputs must be preserved (e.g. wh
     >>> ff.cmd
     'ffmpeg -i video.mp4 -i audio_1.mp3 -i audio_2.mp3 -map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2 output.ts'
     >>> ff.run()
-
+    
+Replace Audio
+-------------
 Another common use case- if input video already contains an audio stream and we want to replace it with another:
 
 .. code:: python
