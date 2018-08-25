@@ -105,10 +105,22 @@ There are cases where the order of inputs and outputs must be preserved (e.g. wh
 
     >>> from collections import OrderedDict
     >>> inputs = OrderedDict([('video.mp4', None), ('audio_1.mp3', None), ('audio_2.mp3', None)])
-    >>> outputs = {'output.ts', '-map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2'}
+    >>> outputs = {'output.ts': '-map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2'}
     >>> ff = FFmpeg(inputs=inputs, outputs=outputs)
     >>> ff.cmd
     'ffmpeg -i video.mp4 -i audio_1.mp3 -i audio_2.mp3 -map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2 output.ts'
+    >>> ff.run()
+
+Another common use case- if input video already contains an audio stream and we want to replace it with another:
+
+.. code:: python
+
+    >>> from collections import OrderedDict
+    >>> inputs = OrderedDict([('input.mp4', None), ('input.mp3', None)])
+    >>> outputs = {'output.mkv': '-c: copy -map 0:v:0 -map 1:a:0'}
+    >>> ff = FFmpeg(inputs=inputs, outputs=outputs)
+    >>> ff.cmd
+    'ffmpeg -i input.mp4 -i input.mp3 -c: copy -map 0:v:0 -map 1:a:0 output.mkv'
     >>> ff.run()
 
 Using ``pipe`` protocol
