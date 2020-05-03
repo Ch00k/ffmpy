@@ -81,7 +81,7 @@ def test_quoted_option():
     quoted_option = (
         "drawtext="
         "fontfile=/Library/Fonts/Verdana.ttf: "
-        "timecode='09\:57\:00\:00': "
+        "timecode='09:57:00:00': "
         "r=25: x=(w-tw)/2: y=h-(2*lh): "
         "fontcolor=white: box=1: "
         "boxcolor=0x00000000@1"
