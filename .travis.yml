@@ -4,13 +4,14 @@ language: python
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 sudo: false
 python:
+  - "3.8"
+  - "3.7"
   - "3.6"
   - "3.5"
   - "3.4"
-  - "3.3"
   - "2.7"
-  - "pypy3.3-5.5-alpha"
   - "pypy"
+  - "pypy3"
 
 install:
   - pip install -U -r dev-requirements.txt
