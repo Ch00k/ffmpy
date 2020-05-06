@@ -1,14 +1,15 @@
+.. image:: https://github.com/Ch00k/ffmpy/workflows/test/badge.svg
+    :target: https://github.com/Ch00k/ffmpy/actions
+    :alt: Tests
+
+.. image:: https://readthedocs.org/projects/ffmpy/badge/?version=latest
+    :target: http://ffmpy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation
+
 .. image:: https://img.shields.io/pypi/v/ffmpy.svg
     :target: https://pypi.python.org/pypi/ffmpy
     :alt: Latest version
 
-.. image:: https://travis-ci.org/Ch00k/ffmpy.svg?branch=master
-    :target: https://travis-ci.org/Ch00k/ffmpy
-    :alt: Travis-CI
-
-.. image:: https://readthedocs.org/projects/ffmpy/badge/?version=latest
-    :target: http://ffmpy.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
 
 
 ffmpy
