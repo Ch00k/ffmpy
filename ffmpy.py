@@ -59,7 +59,7 @@ class FFmpeg(object):
     def __repr__(self):
         return '<{0!r} {1!r}>'.format(self.__class__.__name__, self.cmd)
 
-    def run(self, input_data=None, stdout=None, stderr=None):
+    def run(self, input_data=None, stdin=None, stdout=None, stderr=None):
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -78,6 +78,7 @@ class FFmpeg(object):
 
         :param str input_data: input data for FFmpeg to deal with (audio, video etc.) as bytes (e.g.
             the result of reading a file in binary mode)
+        :param stdin: replace FFmpeg ``stdin`` (default is `None` which means `subprocess.PIPE`)
         :param stdout: redirect FFmpeg ``stdout`` there (default is `None` which means no
             redirection)
         :param stderr: redirect FFmpeg ``stderr`` there (default is `None` which means no
@@ -87,10 +88,13 @@ class FFmpeg(object):
         :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
             `FFExecutableNotFoundError` in case the executable path passed was not valid
         """
+        if input_data is not None or stdin is None:
+            stdin = subprocess.PIPE
+
         try:
             self.process = subprocess.Popen(
                 self._cmd,
-                stdin=subprocess.PIPE,
+                stdin=stdin,
                 stdout=stdout,
                 stderr=stderr
             )
