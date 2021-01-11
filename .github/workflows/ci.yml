@@ -36,4 +36,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: x64
       - run: pip install -U -r test-requirements.txt
-      - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests
+      - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests --cov=ffmpy --cov-report xml
+
+      - name: upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
