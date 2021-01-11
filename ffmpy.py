@@ -1,9 +1,8 @@
-import errno
 import shlex
+import errno
 import subprocess
 
-
-__version__ = '0.2.3'
+__version__ = "0.2.3"
 
 
 class FFmpeg(object):
@@ -11,7 +10,9 @@ class FFmpeg(object):
     ffprobe).
     """
 
-    def __init__(self, executable='ffmpeg', global_options=None, inputs=None, outputs=None):
+    def __init__(
+        self, executable="ffmpeg", global_options=None, inputs=None, outputs=None
+    ):
         """Initialize FFmpeg command line wrapper.
 
         Compiles FFmpeg command line from passed arguments (executable path, options, inputs and
@@ -57,7 +58,7 @@ class FFmpeg(object):
         self.process = None
 
     def __repr__(self):
-        return '<{0!r} {1!r}>'.format(self.__class__.__name__, self.cmd)
+        return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
 
     def run(self, input_data=None, stdout=None, stderr=None):
         """Execute FFmpeg command line.
@@ -89,14 +90,13 @@ class FFmpeg(object):
         """
         try:
             self.process = subprocess.Popen(
-                self._cmd,
-                stdin=subprocess.PIPE,
-                stdout=stdout,
-                stderr=stderr
+                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr
             )
         except OSError as e:
             if e.errno == errno.ENOENT:
-                raise FFExecutableNotFoundError("Executable '{0}' not found".format(self.executable))
+                raise FFExecutableNotFoundError(
+                    "Executable '{0}' not found".format(self.executable)
+                )
             else:
                 raise
 
@@ -110,7 +110,7 @@ class FFmpeg(object):
 class FFprobe(FFmpeg):
     """Wrapper for `ffprobe <https://www.ffmpeg.org/ffprobe.html>`_."""
 
-    def __init__(self, executable='ffprobe', global_options='', inputs=None):
+    def __init__(self, executable="ffprobe", global_options="", inputs=None):
         """Create an instance of FFprobe.
 
         Compiles FFprobe command line from passed arguments (executable path, options, inputs).
@@ -125,9 +125,7 @@ class FFprobe(FFmpeg):
             corresponding options as values
         """
         super(FFprobe, self).__init__(
-            executable=executable,
-            global_options=global_options,
-            inputs=inputs
+            executable=executable, global_options=global_options, inputs=inputs
         )
 
 
@@ -149,10 +147,7 @@ class FFRuntimeError(Exception):
         self.stderr = stderr
 
         message = "`{0}` exited with status {1}\n\nSTDOUT:\n{2}\n\nSTDERR:\n{3}".format(
-            self.cmd,
-            exit_code,
-            (stdout or b'').decode(),
-            (stderr or b'').decode()
+            self.cmd, exit_code, (stdout or b"").decode(), (stderr or b"").decode()
         )
 
         super(FFRuntimeError, self).__init__(message)
@@ -165,7 +160,7 @@ def _is_sequence(obj):
     :return: True if the object is iterable but is not a string, False otherwise
     :rtype: bool
     """
-    return hasattr(obj, '__iter__') and not isinstance(obj, str)
+    return hasattr(obj, "__iter__") and not isinstance(obj, str)
 
 
 def _merge_args_opts(args_opts_dict, **kwargs):
@@ -186,14 +181,14 @@ def _merge_args_opts(args_opts_dict, **kwargs):
 
     for arg, opt in args_opts_dict.items():
         if not _is_sequence(opt):
-            opt = shlex.split(opt or '')
+            opt = shlex.split(opt or "")
         merged += opt
 
         if not arg:
             continue
 
-        if 'add_input_option' in kwargs:
-            merged.append('-i')
+        if "add_input_option" in kwargs:
+            merged.append("-i")
 
         merged.append(arg)
 

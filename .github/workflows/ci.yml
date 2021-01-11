@@ -7,11 +7,20 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  lint:
+    runs-on: ubuntu-latest
+    name: lint
+    steps:
+      - run: pip install -U -r dev-requirements.txt
+      - run: flake8 .
+      - run: black --check --diff .
+      - run: isort --check --diff .
+
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2, pypy3]
     name: Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v2
@@ -20,6 +29,4 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: pip install -U -r dev-requirements.txt
-      - run: flake8 .
       - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests
