@@ -68,7 +68,7 @@ class FFmpeg(object):
         process. By default no redirection is done, which means all output goes to running shell
         (this mode should normally only be used for debugging purposes). If FFmpeg ``pipe`` protocol
         is used for output, ``stdout`` must be redirected to a pipe by passing `subprocess.PIPE` as
-        ``stdout`` argument.
+        ``stdout`` argument. You can pass custom environment to ffmpeg process with ``env``.
 
         Returns a 2-tuple containing ``stdout`` and ``stderr`` of the process. If there was no
         redirection or if the output was redirected to e.g. `os.devnull`, the value returned will
@@ -83,6 +83,7 @@ class FFmpeg(object):
             redirection)
         :param stderr: redirect FFmpeg ``stderr`` there (default is `None` which means no
             redirection)
+        :param env: custom environment for ffmpeg process
         :return: a 2-tuple containing ``stdout`` and ``stderr`` of the process
         :rtype: tuple
         :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
