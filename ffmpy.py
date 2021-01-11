@@ -1,5 +1,5 @@
-import shlex
 import errno
+import shlex
 import subprocess
 
 __version__ = "0.2.3"
