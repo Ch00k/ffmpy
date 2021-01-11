@@ -35,5 +35,5 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: pip install -U -r dev-requirements.txt
+      - run: pip install -U -r test-requirements.txt
       - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests
