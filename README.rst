@@ -2,6 +2,10 @@
     :target: https://github.com/Ch00k/ffmpy/actions
     :alt: Tests
 
+.. image:: https://codecov.io/gh/Ch00k/ffmpy/branch/master/graphs/badge.svg
+    :target: https://codecov.io/github/Ch00k/ffmpy
+    :alt: Coverage
+
 .. image:: https://readthedocs.org/projects/ffmpy/badge/?version=latest
     :target: http://ffmpy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation
@@ -9,7 +13,6 @@
 .. image:: https://img.shields.io/pypi/v/ffmpy.svg
     :target: https://pypi.python.org/pypi/ffmpy
     :alt: Latest version
-
 
 
 ffmpy
