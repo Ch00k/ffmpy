@@ -14,7 +14,7 @@
 
 ffmpy
 =====
-ffmpy is a simplystic `FFmpeg <http://ffmpeg.org/>`_ command line wrapper. It implements a Pythonic interface for FFmpeg command line compilation and uses Python `subprocess <https://docs.python.org/2/library/subprocess.html>`_ module to execute compiled command line.
+ffmpy is a simplistic `FFmpeg <http://ffmpeg.org/>`_ command line wrapper. It implements a Pythonic interface for FFmpeg command line compilation and uses Python `subprocess <https://docs.python.org/2/library/subprocess.html>`_ module to execute compiled command line.
 
 Installation
 ------------
