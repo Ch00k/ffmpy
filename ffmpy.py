@@ -60,7 +60,7 @@ class FFmpeg(object):
     def __repr__(self):
         return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
 
-    def run(self, input_data=None, stdout=None, stderr=None):
+    def run(self, input_data=None, stdout=None, stderr=None, env=None):
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -68,7 +68,7 @@ class FFmpeg(object):
         process. By default no redirection is done, which means all output goes to running shell
         (this mode should normally only be used for debugging purposes). If FFmpeg ``pipe`` protocol
         is used for output, ``stdout`` must be redirected to a pipe by passing `subprocess.PIPE` as
-        ``stdout`` argument.
+        ``stdout`` argument. You can pass custom environment to ffmpeg process with ``env``.
 
         Returns a 2-tuple containing ``stdout`` and ``stderr`` of the process. If there was no
         redirection or if the output was redirected to e.g. `os.devnull`, the value returned will
@@ -83,6 +83,7 @@ class FFmpeg(object):
             redirection)
         :param stderr: redirect FFmpeg ``stderr`` there (default is `None` which means no
             redirection)
+        :param env: custom environment for ffmpeg process
         :return: a 2-tuple containing ``stdout`` and ``stderr`` of the process
         :rtype: tuple
         :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
@@ -90,7 +91,7 @@ class FFmpeg(object):
         """
         try:
             self.process = subprocess.Popen(
-                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr
+                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, env=env
             )
         except OSError as e:
             if e.errno == errno.ENOENT:
