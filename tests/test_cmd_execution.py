@@ -2,9 +2,9 @@ import os
 import subprocess
 import threading
 import time
+from unittest import mock
 
 import pytest
-from unittest import mock
 
 from ffmpy import FFExecutableNotFoundError, FFmpeg, FFRuntimeError
 
@@ -178,12 +178,12 @@ def test_terminate_process():
     assert ff.process.returncode == -15
 
 
-@mock.patch('ffmpy.subprocess.Popen')
+@mock.patch("ffmpy.subprocess.Popen")
 def test_custom_env(popen_mock):
     ff = FFmpeg()
-    popen_mock.return_value.communicate.return_value = ('output', 'error')
+    popen_mock.return_value.communicate.return_value = ("output", "error")
     popen_mock.return_value.returncode = 0
-    ff.run(env='customenv')
+    ff.run(env="customenv")
     popen_mock.assert_called_with(
-        mock.ANY, stdin=mock.ANY, stdout=mock.ANY, stderr=mock.ANY, env='customenv'
+        mock.ANY, stdin=mock.ANY, stdout=mock.ANY, stderr=mock.ANY, env="customenv"
     )
