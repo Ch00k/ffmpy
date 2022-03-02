@@ -60,7 +60,7 @@ class FFmpeg(object):
     def __repr__(self):
         return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
 
-    def run(self, input_data=None, stdout=None, stderr=None, env=None):
+    def run(self, input_data=None, stdout=None, stderr=None, env=None, creationflags=None):
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -91,7 +91,7 @@ class FFmpeg(object):
         """
         try:
             self.process = subprocess.Popen(
-                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, env=env
+                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, env=env, creationflags=creationflags
             )
         except OSError as e:
             if e.errno == errno.ENOENT:
