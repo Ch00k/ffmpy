@@ -60,7 +60,7 @@ class FFmpeg(object):
     def __repr__(self):
         return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
 
-    def run(self, input_data=None, stdout=None, stderr=None, env=None, creationflags=None):
+    def run(self, input_data=None, stdout=None, stderr=None, env=None, creationflags=subprocess.CREATE_NEW_CONSOLE):
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -84,6 +84,8 @@ class FFmpeg(object):
         :param stderr: redirect FFmpeg ``stderr`` there (default is `None` which means no
             redirection)
         :param env: custom environment for ffmpeg process
+        :param creationflags: determines how ffmpeg process is created (default is 'subprocess.CREATE_NEW_CONSOLE',
+            which creates a new console)
         :return: a 2-tuple containing ``stdout`` and ``stderr`` of the process
         :rtype: tuple
         :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
