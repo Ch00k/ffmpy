@@ -3,7 +3,7 @@ Examples
 
 .. contents:: :local:
 
-Format convertion
+Format conversion
 -----------------
 The simplest example of usage is converting media from one format to another (in this case from MPEG transport stream to MP4) preserving all other attributes:
 
