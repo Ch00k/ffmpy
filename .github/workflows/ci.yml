@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     name: lint
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.11"
           architecture: x64
       - run: pip install -U -r dev-requirements.txt
       - run: flake8 .
@@ -23,15 +23,16 @@ jobs:
       - run: isort --check --diff .
 
   test:
-    runs-on: ubuntu-latest
+    # https://github.com/actions/setup-python/issues/544
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.9", "pypy3.10"]
     name: Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
@@ -39,6 +40,6 @@ jobs:
       - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests --cov=ffmpy --cov-report xml
 
       - name: upload coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
