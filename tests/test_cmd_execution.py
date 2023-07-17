@@ -187,3 +187,21 @@ def test_custom_env(popen_mock):
     popen_mock.assert_called_with(
         mock.ANY, stdin=mock.ANY, stdout=mock.ANY, stderr=mock.ANY, env="customenv"
     )
+
+
+@mock.patch("ffmpy.subprocess.Popen")
+def test_arbitraty_popen_kwargs(popen_mock):
+    ff = FFmpeg()
+    popen_mock.return_value.communicate.return_value = ("output", "error")
+    popen_mock.return_value.returncode = 0
+    ff.run(creationflags=42, encoding="foo", text="bar")
+    popen_mock.assert_called_with(
+        mock.ANY,
+        stdin=mock.ANY,
+        stdout=mock.ANY,
+        stderr=mock.ANY,
+        env=None,
+        creationflags=42,
+        encoding="foo",
+        text="bar",
+    )

@@ -60,7 +60,7 @@ class FFmpeg(object):
     def __repr__(self):
         return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
 
-    def run(self, input_data=None, stdout=None, stderr=None, env=None):
+    def run(self, input_data=None, stdout=None, stderr=None, env=None, **kwargs):
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -84,6 +84,8 @@ class FFmpeg(object):
         :param stderr: redirect FFmpeg ``stderr`` there (default is `None` which means no
             redirection)
         :param env: custom environment for ffmpeg process
+        :param kwargs: any other keyword arguments to be forwarded to `subprocess.Popen
+            <https://docs.python.org/3/library/subprocess.html#subprocess.Popen>`_
         :return: a 2-tuple containing ``stdout`` and ``stderr`` of the process
         :rtype: tuple
         :raise: `FFRuntimeError` in case FFmpeg command exits with a non-zero code;
@@ -91,7 +93,12 @@ class FFmpeg(object):
         """
         try:
             self.process = subprocess.Popen(
-                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, env=env
+                self._cmd,
+                stdin=subprocess.PIPE,
+                stdout=stdout,
+                stderr=stderr,
+                env=env,
+                **kwargs
             )
         except OSError as e:
             if e.errno == errno.ENOENT:
