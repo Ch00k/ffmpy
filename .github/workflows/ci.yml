@@ -11,11 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     name: lint
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
           architecture: x64
       - run: pip install -U -r dev-requirements.txt
       - run: flake8 .
@@ -27,19 +26,29 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.9", "pypy3.10"]
+        python-version:
+          - "3.6"
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "pypy3.8"
+          - "pypy3.9"
+          - "pypy3.10"
     name: Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
       - run: pip install -U -r test-requirements.txt
       - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests --cov=ffmpy --cov-report xml
 
-      - name: upload coverage
-        uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
+        if: matrix.python-version == 3.12
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
