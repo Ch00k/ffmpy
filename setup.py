@@ -1,11 +1,9 @@
 from setuptools import setup
 from setuptools.command.test import test as TestCommand  # noqa
 
-from ffmpy import __version__
-
 setup(
     name="ffmpy",
-    version=__version__,
+    version="0.3.2",
     description="A simple Python wrapper for ffmpeg",
     long_description=open("README.rst").read(),
     author="Andrii Yurchuk",
