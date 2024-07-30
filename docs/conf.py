@@ -2,12 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import os
-import sys
 from typing import Dict
-
-sys.path.insert(0, os.path.abspath(".."))  # noqa
-import ffmpy  # noqa
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -22,8 +17,8 @@ project = "ffmpy"
 copyright = f"2015-{datetime.datetime.now().year}, Andrii Yurchuk"
 author = "Andrii Yurchuk"
 
-version = ffmpy.__version__
-release = ffmpy.__version__
+version = "0.4.0"
+release = "0.4.0"
 
 language = "en"
 

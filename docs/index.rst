@@ -13,6 +13,8 @@ ffmpy
 
 At this moment *ffmpy* has wrappers for ``ffmpeg`` and ``ffprobe`` commands, but it should be possible to run other FFmpeg tools with it (e.g. ``ffserver``).
 
+*ffmpy* requires Python 3.8 or greater.
+
 Installation
 ------------
 ::
@@ -23,12 +25,12 @@ Quickstart
 ----------
 ::
 
-  >>> import ffmpy
-  >>> ff = ffmpy.FFmpeg(
-  ...     inputs={'input.mp4': None},
-  ...     outputs={'output.avi': None}
-  ... )
-  >>> ff.run()
+  from ffmpy import FFmpeg
+  ff = FFmpeg(
+      inputs={'input.mp4': None},
+      outputs={'output.avi': None}
+  )
+  ff.run()
 
 This takes ``input.mp4`` file in the current directory as the input, changes the video container from MP4 to AVI without changing any other video parameters and creates a new output file ``output.avi`` in the current directory.
 

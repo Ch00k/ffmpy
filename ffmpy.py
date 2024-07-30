@@ -4,8 +4,6 @@ import shlex
 import subprocess
 from typing import IO, Any, List, Mapping, Optional, Sequence, Tuple, Union
 
-__version__ = "0.3.3"
-
 
 class FFmpeg(object):
     """Wrapper for various `FFmpeg <https://www.ffmpeg.org/>`_ related applications (ffmpeg,

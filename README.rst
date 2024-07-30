@@ -19,9 +19,11 @@ ffmpy
 =====
 *ffmpy* is a simple `FFmpeg <http://ffmpeg.org/>`_ command line wrapper. It implements a Pythonic interface for FFmpeg command line compilation and uses Python's `subprocess <https://docs.python.org/2/library/subprocess.html>`_ to execute the compiled command line.
 
+*ffmpy* requires Python 3.8 or greater.
+
 Installation
 ------------
-You guessed it::
+::
 
   pip install ffmpy
 
@@ -29,12 +31,12 @@ Quick example
 -------------
 .. code:: python
 
-  >>> import ffmpy
-  >>> ff = ffmpy.FFmpeg(
-  ...     inputs={'input.mp4': None},
-  ...     outputs={'output.avi': None}
-  ... )
-  >>> ff.run()
+  from ffmpy import FFmpeg
+  ff = FFmpeg(
+      inputs={'input.mp4': None},
+      outputs={'output.avi': None}
+  )
+  ff.run()
 
 This will take the ``input.mp4`` file in the current directory as the input, change the video container from MP4 to AVI without changing any other video parameters, and create a new output file ``output.avi`` in the current directory.
 

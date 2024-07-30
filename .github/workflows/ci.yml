@@ -1,10 +1,14 @@
-name: test
+name: ci
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+    tags:
+      - '**'
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   lint:
@@ -37,7 +41,7 @@ jobs:
           - "pypy3.8"
           - "pypy3.9"
           - "pypy3.10"
-    name: Python ${{ matrix.python-version }}
+    name: test ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,3 +57,22 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+
+  publish:
+    runs-on: ubuntu-latest
+    name: publish
+    if: github.ref_type == 'tag'
+    needs:
+      - lint
+      - test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+      - run: |
+          pip install poetry
+          poetry publish --build
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
