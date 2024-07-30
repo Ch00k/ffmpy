@@ -46,7 +46,6 @@ jobs:
       - run: |
           pip install poetry
           poetry install --with dev
-      - run: cp tests/ffmpeg/ffmpeg /usr/local/bin/ffmpeg
       - run: poetry run pytest --cov=ffmpy --cov-report xml
       - uses: codecov/codecov-action@v4
         if: matrix.python-version == 3.12
