@@ -8,12 +8,30 @@ import pytest
 
 from ffmpy import FFExecutableNotFoundError, FFmpeg, FFRuntimeError
 
+FFMPEG_PATH = os.path.join(os.path.dirname(__file__), "ffmpeg")
+os.environ["PATH"] = FFMPEG_PATH + os.pathsep + os.environ["PATH"]
+
 
 def test_invalid_executable_path():
     ff = FFmpeg(executable="/tmp/foo/bar/ffmpeg")
     with pytest.raises(FFExecutableNotFoundError) as exc_info:
         ff.run()
     assert str(exc_info.value) == "Executable '/tmp/foo/bar/ffmpeg' not found"
+
+
+def test_other_oserror():
+    executable = os.path.join(FFMPEG_PATH, "ffmpeg.go")
+    ff = FFmpeg(executable=executable)
+    with pytest.raises(PermissionError) as exc_info:
+        ff.run()
+    assert str(exc_info.value).startswith("[Errno 13] Permission denied")
+
+
+def test_executable_full_path():
+    executable = os.path.join(FFMPEG_PATH, "ffmpeg")
+    ff = FFmpeg(executable=executable)
+    ff.run()
+    assert ff.cmd == executable
 
 
 def test_no_redirection():

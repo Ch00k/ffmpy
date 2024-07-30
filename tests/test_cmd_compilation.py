@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import pytest
 
-from ffmpy import FFmpeg
+from ffmpy import FFmpeg, FFprobe
 
 
 @pytest.mark.parametrize(
@@ -142,3 +142,16 @@ def test_path_with_spaces():
     ff = FFmpeg(inputs=inputs, outputs=outputs)
     assert ff._cmd == ["ffmpeg", "-i", "/home/ay/file with spaces", "output.ts"]
     assert ff.cmd == 'ffmpeg -i "/home/ay/file with spaces" output.ts'
+
+
+def test_repr():
+    inputs = {"input.ts": "-f rawvideo"}
+    outputs = {"output.ts": "-f rawvideo"}
+    ff = FFmpeg(inputs=inputs, outputs=outputs)
+    assert repr(ff) == "<'FFmpeg' 'ffmpeg -f rawvideo -i input.ts -f rawvideo output.ts'>"
+
+
+def test_ffprobe():
+    inputs = {"input.ts": "-f rawvideo"}
+    ff = FFprobe(global_options="--verbose", inputs=inputs)
+    assert repr(ff) == "<'FFprobe' 'ffprobe --verbose -f rawvideo -i input.ts'>"
