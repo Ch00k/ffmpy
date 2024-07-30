@@ -113,7 +113,7 @@ There are cases where the order of inputs and outputs must be preserved (e.g. wh
 
 Using ``pipe`` protocol
 -----------------------
-``ffmpy`` can read input from ``STDIN`` and write output to ``STDOUT``. This can be achieved by using FFmpeg `pipe <https://www.ffmpeg.org/ffmpeg-protocols.html#pipe>`_ protocol. The following example reads data from a file containing raw video frames in RGB format and passes it to ``ffmpy`` on ``STDIN``; ``ffmpy`` in its turn will encode raw frame data with H.264 and pack it in an MP4 container passing the output to ``STDOUT`` (note that you must redirect ``STDOUT`` of the process to a pipe by using ``subprocess.PIPE`` as ``stdout`` value, otherwise the output will get lost):
+*ffmpy* can read input from ``STDIN`` and write output to ``STDOUT``. This can be achieved by using FFmpeg `pipe <https://www.ffmpeg.org/ffmpeg-protocols.html#pipe>`_ protocol. The following example reads data from a file containing raw video frames in RGB format and passes it to *ffmpy* on ``STDIN``; *ffmpy* in its turn will encode raw frame data with H.264 and pack it in an MP4 container passing the output to ``STDOUT`` (note that you must redirect ``STDOUT`` of the process to a pipe by using ``subprocess.PIPE`` as ``stdout`` value, otherwise the output will get lost):
 
 .. code:: python
 
@@ -130,7 +130,7 @@ Using ``pipe`` protocol
 
 Complex command lines
 ---------------------
-``FFmpeg`` command line can get pretty complex, for example, when using `filtering <https://trac.ffmpeg.org/wiki/FilteringGuide>`_. Therefore it is important to understand some of the rules for building command lines building with ``ffmpy``. If an option contains quotes, it must be specified as a separate item in the options list **without** the quotes. However, if a single string is used for options, the quotes of the quoted option must be preserved in the string:
+``FFmpeg`` command line can get pretty complex, for example, when using `filtering <https://trac.ffmpeg.org/wiki/FilteringGuide>`_. Therefore it is important to understand some of the rules for building command lines building with *ffmpy*. If an option contains quotes, it must be specified as a separate item in the options list **without** the quotes. However, if a single string is used for options, the quotes of the quoted option must be preserved in the string:
 
 .. code:: python
 
@@ -154,7 +154,7 @@ An even more complex example is a command line that burns the timecode into vide
 
     ffmpeg -i input.ts -vf "drawtext=fontfile=/Library/Fonts/Verdana.ttf: timecode='09\:57\:00\:00': r=25: x=(w-tw)/2: y=h-(2*lh): fontcolor=white: box=1: boxcolor=0x00000000@1" -an output.ts
 
-In ``ffmpy`` it can be expressed in the following way:
+In *ffmpy* it can be expressed in the following way:
 
 .. code:: python
 
