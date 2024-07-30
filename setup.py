@@ -1,5 +1,4 @@
 from setuptools import setup
-from setuptools.command.test import test as TestCommand  # noqa
 
 from ffmpy import __version__
 
