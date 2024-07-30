@@ -1,6 +1,8 @@
 import errno
+import itertools
 import shlex
 import subprocess
+from typing import IO, Any, List, Mapping, Optional, Sequence, Tuple, Union
 
 __version__ = "0.3.3"
 
@@ -10,7 +12,13 @@ class FFmpeg(object):
     ffprobe).
     """
 
-    def __init__(self, executable="ffmpeg", global_options=None, inputs=None, outputs=None):
+    def __init__(
+        self,
+        executable: str = "ffmpeg",
+        global_options: Optional[Union[Sequence[str], str]] = None,
+        inputs: Optional[Mapping[str, Optional[Union[Sequence[str], str]]]] = None,
+        outputs: Optional[Mapping[str, Optional[Union[Sequence[str], str]]]] = None,
+    ) -> None:
         """Initialize FFmpeg command line wrapper.
 
         Compiles FFmpeg command line from passed arguments (executable path, options, inputs and
@@ -39,26 +47,28 @@ class FFmpeg(object):
         """
         self.executable = executable
         self._cmd = [executable]
+        self._cmd += _normalize_options(global_options, split_mixed=True)
 
-        global_options = global_options or []
-        if _is_sequence(global_options):
-            normalized_global_options = []
-            for opt in global_options:
-                normalized_global_options += shlex.split(opt)
-        else:
-            normalized_global_options = shlex.split(global_options)
+        if inputs is not None:
+            self._cmd += _merge_args_opts(inputs, add_minus_i_option=True)
 
-        self._cmd += normalized_global_options
-        self._cmd += _merge_args_opts(inputs, add_input_option=True)
-        self._cmd += _merge_args_opts(outputs)
+        if outputs is not None:
+            self._cmd += _merge_args_opts(outputs)
 
         self.cmd = subprocess.list2cmdline(self._cmd)
-        self.process = None
+        self.process: Optional[subprocess.Popen] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
 
-    def run(self, input_data=None, stdout=None, stderr=None, env=None, **kwargs):
+    def run(
+        self,
+        input_data: Optional[bytes] = None,
+        stdout: Optional[Union[IO, int]] = None,
+        stderr: Optional[Union[IO, int]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        **kwargs: Any
+    ) -> Tuple[Optional[bytes], Optional[bytes]]:
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -99,17 +109,22 @@ class FFmpeg(object):
             else:
                 raise
 
-        out = self.process.communicate(input=input_data)
+        o_stdout, o_stderr = self.process.communicate(input=input_data)
         if self.process.returncode != 0:
-            raise FFRuntimeError(self.cmd, self.process.returncode, out[0], out[1])
+            raise FFRuntimeError(self.cmd, self.process.returncode, o_stdout, o_stderr)
 
-        return out
+        return o_stdout, o_stderr
 
 
 class FFprobe(FFmpeg):
     """Wrapper for `ffprobe <https://www.ffmpeg.org/ffprobe.html>`_."""
 
-    def __init__(self, executable="ffprobe", global_options="", inputs=None):
+    def __init__(
+        self,
+        executable: str = "ffprobe",
+        global_options: Optional[Union[Sequence[str], str]] = None,
+        inputs: Optional[Mapping[str, Optional[Union[Sequence[str], str]]]] = None,
+    ) -> None:
         """Create an instance of FFprobe.
 
         Compiles FFprobe command line from passed arguments (executable path, options, inputs).
@@ -139,7 +154,7 @@ class FFRuntimeError(Exception):
     ``cmd``, ``exit_code``, ``stdout``, ``stderr``.
     """
 
-    def __init__(self, cmd, exit_code, stdout, stderr):
+    def __init__(self, cmd: str, exit_code: int, stdout: bytes, stderr: bytes) -> None:
         self.cmd = cmd
         self.exit_code = exit_code
         self.stdout = stdout
@@ -152,17 +167,10 @@ class FFRuntimeError(Exception):
         super(FFRuntimeError, self).__init__(message)
 
 
-def _is_sequence(obj):
-    """Check if the object is a sequence (list, tuple etc.).
-
-    :param object obj: an object to be checked
-    :return: True if the object is iterable but is not a string, False otherwise
-    :rtype: bool
-    """
-    return hasattr(obj, "__iter__") and not isinstance(obj, str)
-
-
-def _merge_args_opts(args_opts_dict, **kwargs):
+def _merge_args_opts(
+    args_opts_dict: Mapping[str, Optional[Union[Sequence[str], str]]],
+    add_minus_i_option: bool = False,
+) -> List[str]:
     """Merge options with their corresponding arguments.
 
     Iterates over the dictionary holding arguments (keys) and options (values). Merges each
@@ -173,22 +181,39 @@ def _merge_args_opts(args_opts_dict, **kwargs):
     :return: merged list of strings with arguments and their corresponding options
     :rtype: list
     """
-    merged = []
-
-    if not args_opts_dict:
-        return merged
+    merged: List[str] = []
 
     for arg, opt in args_opts_dict.items():
-        if not _is_sequence(opt):
-            opt = shlex.split(opt or "")
-        merged += opt
+        merged += _normalize_options(opt)
 
         if not arg:
             continue
 
-        if "add_input_option" in kwargs:
+        if add_minus_i_option:
             merged.append("-i")
 
         merged.append(arg)
 
     return merged
+
+
+def _normalize_options(
+    options: Optional[Union[Sequence[str], str]], split_mixed: bool = False
+) -> List[str]:
+    """Normalize options string or list of strings.
+
+    Splits `options` into a list of strings. If `split_mixed` is `True`, splits (flattens) mixed
+    options (i.e. list of strings with spaces) into separate items.
+
+    :param options: options string or list of strings
+    :param bool split_mixed: whether to split mixed options into separate items
+    """
+    if options is None:
+        return []
+    elif isinstance(options, str):
+        return shlex.split(options)
+    else:
+        if split_mixed:
+            return list(itertools.chain(*[shlex.split(o) for o in options]))
+        else:
+            return list(options)

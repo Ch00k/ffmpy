@@ -99,6 +99,10 @@ To multiplex video and audio back into an MPEG transport stream with re-encoding
     'ffmpeg -i audio.mp4 -i video.mp4 -c:v h264 -c:a ac3 output.ts'
     >>> ff.run()
 
+.. note::
+
+    Since Python 3.7 dictionaries preserve order. Using OrderedDict is no longer necessary.
+
 There are cases where the order of inputs and outputs must be preserved (e.g. when using FFmpeg `-map <https://trac.ffmpeg.org/wiki/How%20to%20use%20-map%20option>`_ option). In these cases the use of regular Python dictionary will not work because it does not preserve order. Instead, use `OrderedDict <https://docs.python.org/3/library/collections.html#collections.OrderedDict>`_. For example we want to multiplex one video and two audio streams into an MPEG transport streams re-encoding both audio streams using different codecs. Here we use an OrderedDict to preserve the order of inputs so they match the order of streams in output options:
 
 .. code:: python

@@ -39,7 +39,7 @@ classifiers = [
   "Operating System :: POSIX :: Linux",
   "Operating System :: MacOS :: MacOS X",
 ]
-packages = [{ include = "ffmpy.py" }]
+packages = [{ include = "ffmpy.py" }, { include = "py.typed" }]
 
 [tool.poetry.dependencies]
 python = "^3.8.1" # flake8 requires Python 3.8.1 or higher
