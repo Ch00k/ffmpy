@@ -16,19 +16,18 @@ jobs:
         with:
           python-version: "3.12"
           architecture: x64
-      - run: pip install -U -r dev-requirements.txt
-      - run: flake8 .
-      - run: black --check --diff .
-      - run: isort --check --diff .
+      - run: |
+          pip install poetry
+          poetry install --with dev
+      - run: poetry run flake8 .
+      - run: poetry run black --check --diff .
+      - run: poetry run isort --check --diff .
 
   test:
-    # https://github.com/actions/setup-python/issues/544
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
-          - "3.6"
-          - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
@@ -44,9 +43,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: pip install -U -r test-requirements.txt
-      - run: PATH=./tests/ffmpeg:$PATH PYTHONPATH=. py.test tests --cov=ffmpy --cov-report xml
-
+      - run: |
+          pip install poetry
+          poetry install --with dev
+      - run: cp tests/ffmpeg/ffmpeg /usr/local/bin/ffmpeg
+      - run: poetry run pytest --cov=ffmpy --cov-report xml
       - uses: codecov/codecov-action@v4
         if: matrix.python-version == 3.12
         with:

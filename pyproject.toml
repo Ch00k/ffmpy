@@ -1,0 +1,79 @@
+[tool.poetry]
+name = "ffmpy"
+version = "0.3.3"
+description = "A simple Python wrapper for FFmpeg"
+authors = ["Andrii Yurchuk <ay@mntw.re>"]
+license = "MIT"
+readme = "README.rst"
+homepage = "https://github.com/Ch00k/ffmpy"
+repository = "https://github.com/Ch00k/ffmpy"
+documentation = "https://ffmpy.readthedocs.io"
+keywords = [
+  "ffmpeg",
+  "ffprobe",
+  "ffplay",
+  "ffserver",
+  "wrapper",
+  "media",
+  "audio",
+  "video",
+  "transcoding",
+]
+classifiers = [
+  "Topic :: Multimedia :: Sound/Audio",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: POSIX :: BSD",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS :: MacOS X",
+]
+packages = [{ include = "ffmpy.py" }]
+
+[tool.poetry.dependencies]
+python = "^3.8.1" # flake8 requires Python 3.8.1 or higher
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+isort = "^5.13.2"
+mypy = "^1.11.0"
+flake8 = "^7.1.0"
+flake8-pyproject = "^1.2.3"
+pytest = "^8.3.2"
+pytest-cov = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 101
+
+[tool.flake8]
+max-line-length = 101
+
+[tool.isort]
+profile = "black"
+line_length = 101
+include_trailing_comma = true
+
+[tool.mypy]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+show_column_numbers = true

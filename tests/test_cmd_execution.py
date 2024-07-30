@@ -130,9 +130,7 @@ def test_non_zero_exitcode_no_stdout_and_stderr():
     with pytest.raises(FFRuntimeError) as exc_info:
         ff.run(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    assert exc_info.value.cmd == (
-        "ffmpeg --stdin none --stdout none --stderr none --exit-code 42"
-    )
+    assert exc_info.value.cmd == ("ffmpeg --stdin none --stdout none --stderr none --exit-code 42")
     assert exc_info.value.exit_code == 42
     assert exc_info.value.stdout == b""
     assert exc_info.value.stderr == b""
@@ -167,8 +165,14 @@ def test_terminate_process():
     thread_1 = threading.Thread(target=ff.run)
     thread_1.start()
 
-    while not ff.process:
-        time.sleep(0.05)
+    timeout = time.time() + 3
+    while time.time() < timeout:
+        if ff.process is None:
+            time.sleep(0.05)
+        else:
+            break
+    else:
+        raise AssertionError("FFmpeg process was not started within 3 seconds")
 
     print(ff.process.returncode)
 
