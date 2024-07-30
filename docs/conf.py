@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import datetime
 import os
 import sys
 
@@ -13,18 +14,17 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
-templates_path = ["_templates"]
 source_suffix = ".rst"
 master_doc = "index"
 
 project = "ffmpy"
-copyright = "2016, Andriy Yurchuk"
-author = "Andriy Yurchuk"
+copyright = f"2015-{datetime.datetime.now().year}, Andrii Yurchuk"
+author = "Andrii Yurchuk"
 
 version = ffmpy.__version__
 release = ffmpy.__version__
 
-language = None
+language = "en"
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
@@ -34,13 +34,12 @@ pygments_style = "sphinx"
 todo_include_todos = False
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
 
 htmlhelp_basename = "ffmpydoc"
 
 latex_elements = {}
 latex_documents = [
-    (master_doc, "ffmpy.tex", "ffmpy Documentation", "Andriy Yurchuk", "manual"),
+    (master_doc, "ffmpy.tex", "ffmpy Documentation", "Andrii Yurchuk", "manual"),
 ]
 
 man_pages = [(master_doc, "ffmpy", "ffmpy Documentation", [author], 1)]
@@ -57,6 +56,9 @@ texinfo_documents = [
     ),
 ]
 
-intersphinx_mapping = {"https://docs.python.org/3": None}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+}
 autoclass_content = "both"
 autodoc_member_order = "bysource"
