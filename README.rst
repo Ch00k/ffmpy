@@ -19,9 +19,11 @@ ffmpy
 =====
 *ffmpy* is a simple `FFmpeg <http://ffmpeg.org/>`_ command line wrapper. It implements a Pythonic interface for FFmpeg command line compilation and uses Python's `subprocess <https://docs.python.org/2/library/subprocess.html>`_ to execute the compiled command line.
 
+*ffmpy* requires Python 3.8 or greater.
+
 Installation
 ------------
-You guessed it::
+::
 
   pip install ffmpy
 
