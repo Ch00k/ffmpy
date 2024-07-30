@@ -1,10 +1,4 @@
-*.pyc
-*.egg-info
-.tox
-.eggs
-.cache
 dist
-build
 
 # Sphinx
 docs/_build

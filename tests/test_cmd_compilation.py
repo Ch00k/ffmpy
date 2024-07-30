@@ -68,12 +68,8 @@ def test_output_options(output_options):
 
 
 def test_input_output_none():
-    inputs = OrderedDict(
-        ((None, ["-f", "rawvideo"]), ("/tmp/video.mp4", ["-f", "mp4"]))
-    )
-    outputs = OrderedDict(
-        (("/tmp/rawvideo", ["-f", "rawvideo"]), (None, ["-f", "mp4"]))
-    )
+    inputs = OrderedDict(((None, ["-f", "rawvideo"]), ("/tmp/video.mp4", ["-f", "mp4"])))
+    outputs = OrderedDict((("/tmp/rawvideo", ["-f", "rawvideo"]), (None, ["-f", "mp4"])))
     ff = FFmpeg(inputs=inputs, outputs=outputs)
     assert ff._cmd == [
         "ffmpeg",
@@ -89,16 +85,12 @@ def test_input_output_none():
         "-f",
         "mp4",
     ]
-    assert ff.cmd == (
-        "ffmpeg -f rawvideo -f mp4 -i /tmp/video.mp4 -f rawvideo /tmp/rawvideo -f mp4"
-    )
+    assert ff.cmd == ("ffmpeg -f rawvideo -f mp4 -i /tmp/video.mp4 -f rawvideo /tmp/rawvideo -f mp4")
 
 
 def test_input_options_output_options_none():
     inputs = OrderedDict((("/tmp/rawvideo", None), ("/tmp/video.mp4", ["-f", "mp4"])))
-    outputs = OrderedDict(
-        (("/tmp/rawvideo", ["-f", "rawvideo"]), ("/tmp/video.mp4", None))
-    )
+    outputs = OrderedDict((("/tmp/rawvideo", ["-f", "rawvideo"]), ("/tmp/video.mp4", None)))
     ff = FFmpeg(inputs=inputs, outputs=outputs)
     assert ff._cmd == [
         "ffmpeg",

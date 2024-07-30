@@ -10,9 +10,7 @@ class FFmpeg(object):
     ffprobe).
     """
 
-    def __init__(
-        self, executable="ffmpeg", global_options=None, inputs=None, outputs=None
-    ):
+    def __init__(self, executable="ffmpeg", global_options=None, inputs=None, outputs=None):
         """Initialize FFmpeg command line wrapper.
 
         Compiles FFmpeg command line from passed arguments (executable path, options, inputs and
@@ -93,18 +91,11 @@ class FFmpeg(object):
         """
         try:
             self.process = subprocess.Popen(
-                self._cmd,
-                stdin=subprocess.PIPE,
-                stdout=stdout,
-                stderr=stderr,
-                env=env,
-                **kwargs
+                self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, env=env, **kwargs
             )
         except OSError as e:
             if e.errno == errno.ENOENT:
-                raise FFExecutableNotFoundError(
-                    "Executable '{0}' not found".format(self.executable)
-                )
+                raise FFExecutableNotFoundError("Executable '{0}' not found".format(self.executable))
             else:
                 raise
 
