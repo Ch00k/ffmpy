@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from typing import List
 
 import pytest
 
@@ -14,10 +14,16 @@ from ffmpy import FFmpeg, FFprobe
         ["-hide_banner -y", "-v debug"],
     ],
 )
-def test_global_options(global_options):
+def test_global_options(global_options: List) -> None:
     ff = FFmpeg(global_options=global_options)
     assert ff._cmd == ["ffmpeg", "-hide_banner", "-y", "-v", "debug"]
     assert ff.cmd == "ffmpeg -hide_banner -y -v debug"
+
+
+def test_global_options_none() -> None:
+    ff = FFmpeg(global_options=None)
+    assert ff._cmd == ["ffmpeg"]
+    assert ff.cmd == "ffmpeg"
 
 
 @pytest.mark.parametrize(
@@ -28,7 +34,7 @@ def test_global_options(global_options):
         ("-f", "rawvideo", "-pix_fmt", "rgb24", "-s:v", "640x480"),
     ],
 )
-def test_input_options(input_options):
+def test_input_options(input_options: List) -> None:
     ff = FFmpeg(inputs={"/tmp/rawvideo": input_options})
     assert ff._cmd == [
         "ffmpeg",
@@ -52,7 +58,7 @@ def test_input_options(input_options):
         ("-f", "rawvideo", "-pix_fmt", "rgb24", "-s:v", "640x480"),
     ],
 )
-def test_output_options(output_options):
+def test_output_options(output_options: List) -> None:
     ff = FFmpeg(outputs={"/tmp/rawvideo": output_options})
     assert ff._cmd == [
         "ffmpeg",
@@ -67,10 +73,34 @@ def test_output_options(output_options):
     assert ff.cmd == "ffmpeg -f rawvideo -pix_fmt rgb24 -s:v 640x480 /tmp/rawvideo"
 
 
-def test_input_output_none():
-    inputs = OrderedDict(((None, ["-f", "rawvideo"]), ("/tmp/video.mp4", ["-f", "mp4"])))
-    outputs = OrderedDict((("/tmp/rawvideo", ["-f", "rawvideo"]), (None, ["-f", "mp4"])))
-    ff = FFmpeg(inputs=inputs, outputs=outputs)
+# This kind of usage would be invalid, but it's tested to ensure the correct behavior
+def test_input_output_options_split_mixed() -> None:
+    ff = FFmpeg(
+        inputs={"/tmp/rawvideo": ["-f rawvideo", "-pix_fmt rgb24", "-s:v 640x480"]},
+        outputs={"/tmp/rawvideo": ["-f rawvideo", "-pix_fmt rgb24", "-s:v 640x480"]},
+    )
+    assert ff._cmd == [
+        "ffmpeg",
+        "-f rawvideo",
+        "-pix_fmt rgb24",
+        "-s:v 640x480",
+        "-i",
+        "/tmp/rawvideo",
+        "-f rawvideo",
+        "-pix_fmt rgb24",
+        "-s:v 640x480",
+        "/tmp/rawvideo",
+    ]
+    assert ff.cmd == (
+        'ffmpeg "-f rawvideo" "-pix_fmt rgb24" "-s:v 640x480" -i /tmp/rawvideo '
+        '"-f rawvideo" "-pix_fmt rgb24" "-s:v 640x480" /tmp/rawvideo'
+    )
+
+
+def test_input_output_none() -> None:
+    inputs = {None: ["-f", "rawvideo"], "/tmp/video.mp4": ["-f", "mp4"]}
+    outputs = {"/tmp/rawvideo": ["-f", "rawvideo"], None: ["-f", "mp4"]}
+    ff = FFmpeg(inputs=inputs, outputs=outputs)  # type: ignore[arg-type]
     assert ff._cmd == [
         "ffmpeg",
         "-f",
@@ -88,9 +118,9 @@ def test_input_output_none():
     assert ff.cmd == ("ffmpeg -f rawvideo -f mp4 -i /tmp/video.mp4 -f rawvideo /tmp/rawvideo -f mp4")
 
 
-def test_input_options_output_options_none():
-    inputs = OrderedDict((("/tmp/rawvideo", None), ("/tmp/video.mp4", ["-f", "mp4"])))
-    outputs = OrderedDict((("/tmp/rawvideo", ["-f", "rawvideo"]), ("/tmp/video.mp4", None)))
+def test_input_options_output_options_none() -> None:
+    inputs = {"/tmp/rawvideo": None, "/tmp/video.mp4": ["-f", "mp4"]}
+    outputs = {"/tmp/rawvideo": ["-f", "rawvideo"], "/tmp/video.mp4": None}
     ff = FFmpeg(inputs=inputs, outputs=outputs)
     assert ff._cmd == [
         "ffmpeg",
@@ -110,7 +140,7 @@ def test_input_options_output_options_none():
     )
 
 
-def test_quoted_option():
+def test_quoted_option() -> None:
     inputs = {"input.ts": None}
     quoted_option = (
         "drawtext="
@@ -135,7 +165,7 @@ def test_quoted_option():
     assert ff.cmd == 'ffmpeg -i input.ts -vf "{0}" -an output.ts'.format(quoted_option)
 
 
-def test_path_with_spaces():
+def test_path_with_spaces() -> None:
     inputs = {"/home/ay/file with spaces": None}
     outputs = {"output.ts": None}
 
@@ -144,14 +174,14 @@ def test_path_with_spaces():
     assert ff.cmd == 'ffmpeg -i "/home/ay/file with spaces" output.ts'
 
 
-def test_repr():
+def test_repr() -> None:
     inputs = {"input.ts": "-f rawvideo"}
     outputs = {"output.ts": "-f rawvideo"}
     ff = FFmpeg(inputs=inputs, outputs=outputs)
     assert repr(ff) == "<'FFmpeg' 'ffmpeg -f rawvideo -i input.ts -f rawvideo output.ts'>"
 
 
-def test_ffprobe():
+def test_ffprobe() -> None:
     inputs = {"input.ts": "-f rawvideo"}
     ff = FFprobe(global_options="--verbose", inputs=inputs)
     assert repr(ff) == "<'FFprobe' 'ffprobe --verbose -f rawvideo -i input.ts'>"

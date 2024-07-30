@@ -4,6 +4,7 @@
 import datetime
 import os
 import sys
+from typing import Dict
 
 sys.path.insert(0, os.path.abspath(".."))  # noqa
 import ffmpy  # noqa
@@ -37,7 +38,7 @@ html_theme = "sphinx_rtd_theme"
 
 htmlhelp_basename = "ffmpydoc"
 
-latex_elements = {}
+latex_elements: Dict = {}
 latex_documents = [
     (master_doc, "ffmpy.tex", "ffmpy Documentation", "Andrii Yurchuk", "manual"),
 ]

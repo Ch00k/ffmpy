@@ -12,14 +12,14 @@ FFMPEG_PATH = os.path.join(os.path.dirname(__file__), "ffmpeg")
 os.environ["PATH"] = FFMPEG_PATH + os.pathsep + os.environ["PATH"]
 
 
-def test_invalid_executable_path():
+def test_invalid_executable_path() -> None:
     ff = FFmpeg(executable="/tmp/foo/bar/ffmpeg")
     with pytest.raises(FFExecutableNotFoundError) as exc_info:
         ff.run()
     assert str(exc_info.value) == "Executable '/tmp/foo/bar/ffmpeg' not found"
 
 
-def test_other_oserror():
+def test_other_oserror() -> None:
     executable = os.path.join(FFMPEG_PATH, "ffmpeg.go")
     ff = FFmpeg(executable=executable)
     with pytest.raises(PermissionError) as exc_info:
@@ -27,14 +27,14 @@ def test_other_oserror():
     assert str(exc_info.value).startswith("[Errno 13] Permission denied")
 
 
-def test_executable_full_path():
+def test_executable_full_path() -> None:
     executable = os.path.join(FFMPEG_PATH, "ffmpeg")
     ff = FFmpeg(executable=executable)
     ff.run()
     assert ff.cmd == executable
 
 
-def test_no_redirection():
+def test_no_redirection() -> None:
     global_options = "--stdin none --stdout oneline --stderr multiline --exit-code 0"
     ff = FFmpeg(global_options=global_options)
     stdout, stderr = ff.run()
@@ -42,7 +42,7 @@ def test_no_redirection():
     assert stderr is None
 
 
-def test_redirect_to_devnull():
+def test_redirect_to_devnull() -> None:
     global_options = "--stdin none --stdout oneline --stderr multiline --exit-code 0"
     ff = FFmpeg(global_options=global_options)
     devnull = open(os.devnull, "wb")
@@ -51,7 +51,7 @@ def test_redirect_to_devnull():
     assert stderr is None
 
 
-def test_redirect_to_pipe():
+def test_redirect_to_pipe() -> None:
     global_options = "--stdin none --stdout oneline --stderr multiline --exit-code 0"
     ff = FFmpeg(global_options=global_options)
     stdout, stderr = ff.run(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -59,7 +59,7 @@ def test_redirect_to_pipe():
     assert stderr == b"These are\nmultiple lines\nprinted to stderr"
 
 
-def test_input():
+def test_input() -> None:
     global_options = "--stdin pipe --stdout oneline --stderr multiline --exit-code 0"
     ff = FFmpeg(global_options=global_options)
     stdout, stderr = ff.run(
@@ -69,7 +69,7 @@ def test_input():
     assert stderr == b"These are\nmultiple lines\nprinted to stderr"
 
 
-def test_non_zero_exitcode():
+def test_non_zero_exitcode() -> None:
     global_options = "--stdin none --stdout multiline --stderr multiline --exit-code 42"
     ff = FFmpeg(global_options=global_options)
     with pytest.raises(FFRuntimeError) as exc_info:
@@ -95,7 +95,7 @@ def test_non_zero_exitcode():
     )
 
 
-def test_non_zero_exitcode_no_stderr():
+def test_non_zero_exitcode_no_stderr() -> None:
     global_options = "--stdin none --stdout multiline --stderr none --exit-code 42"
     ff = FFmpeg(global_options=global_options)
     with pytest.raises(FFRuntimeError) as exc_info:
@@ -118,7 +118,7 @@ def test_non_zero_exitcode_no_stderr():
     )
 
 
-def test_non_zero_exitcode_no_stdout():
+def test_non_zero_exitcode_no_stdout() -> None:
     global_options = "--stdin none --stdout none --stderr multiline --exit-code 42"
     ff = FFmpeg(global_options=global_options)
     with pytest.raises(FFRuntimeError) as exc_info:
@@ -142,7 +142,7 @@ def test_non_zero_exitcode_no_stdout():
     )
 
 
-def test_non_zero_exitcode_no_stdout_and_stderr():
+def test_non_zero_exitcode_no_stdout_and_stderr() -> None:
     global_options = "--stdin none --stdout none --stderr none --exit-code 42"
     ff = FFmpeg(global_options=global_options)
     with pytest.raises(FFRuntimeError) as exc_info:
@@ -161,7 +161,7 @@ def test_non_zero_exitcode_no_stdout_and_stderr():
     )
 
 
-def test_raise_exception_with_stdout_stderr_none():
+def test_raise_exception_with_stdout_stderr_none() -> None:
     global_options = "--stdin none --stdout none --stderr none --exit-code 42"
     ff = FFmpeg(global_options=global_options)
     with pytest.raises(FFRuntimeError) as exc_info:
@@ -176,7 +176,7 @@ def test_raise_exception_with_stdout_stderr_none():
     )
 
 
-def test_terminate_process():
+def test_terminate_process() -> None:
     global_options = "--long-run"
     ff = FFmpeg(global_options=global_options)
 
@@ -201,18 +201,18 @@ def test_terminate_process():
 
 
 @mock.patch("ffmpy.subprocess.Popen")
-def test_custom_env(popen_mock):
+def test_custom_env(popen_mock: mock.MagicMock) -> None:
     ff = FFmpeg()
     popen_mock.return_value.communicate.return_value = ("output", "error")
     popen_mock.return_value.returncode = 0
-    ff.run(env="customenv")
+    ff.run(env={"FOO": "BAR"})
     popen_mock.assert_called_with(
-        mock.ANY, stdin=mock.ANY, stdout=mock.ANY, stderr=mock.ANY, env="customenv"
+        mock.ANY, stdin=mock.ANY, stdout=mock.ANY, stderr=mock.ANY, env={"FOO": "BAR"}
     )
 
 
 @mock.patch("ffmpy.subprocess.Popen")
-def test_arbitraty_popen_kwargs(popen_mock):
+def test_arbitraty_popen_kwargs(popen_mock: mock.MagicMock) -> None:
     ff = FFmpeg()
     popen_mock.return_value.communicate.return_value = ("output", "error")
     popen_mock.return_value.returncode = 0

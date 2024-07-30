@@ -22,6 +22,7 @@ jobs:
       - run: poetry run flake8 .
       - run: poetry run black --check --diff .
       - run: poetry run isort --check --diff .
+      - run: poetry run mypy .
 
   test:
     runs-on: ubuntu-latest
