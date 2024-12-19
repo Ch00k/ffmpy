@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ffmpy"
-version = "0.4.0"
+version = "0.5.0"
 description = "A simple Python wrapper for FFmpeg"
 authors = ["Andrii Yurchuk <ay@mntw.re>"]
 license = "MIT"
