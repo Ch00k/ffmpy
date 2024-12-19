@@ -40,7 +40,7 @@ classifiers = [
   "Operating System :: POSIX :: Linux",
   "Operating System :: MacOS :: MacOS X",
 ]
-packages = [{ include = "ffmpy.py" }, { include = "py.typed" }]
+packages = [{ include = "ffmpy" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"

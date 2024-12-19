@@ -202,7 +202,7 @@ def test_terminate_process() -> None:
     assert ff.process.returncode == -15
 
 
-@mock.patch("ffmpy.subprocess.Popen")
+@mock.patch("ffmpy.ffmpy.subprocess.Popen")
 def test_custom_env(popen_mock: mock.MagicMock) -> None:
     ff = FFmpeg()
     popen_mock.return_value.communicate.return_value = ("output", "error")
@@ -213,7 +213,7 @@ def test_custom_env(popen_mock: mock.MagicMock) -> None:
     )
 
 
-@mock.patch("ffmpy.subprocess.Popen")
+@mock.patch("ffmpy.ffmpy.subprocess.Popen")
 def test_arbitraty_popen_kwargs(popen_mock: mock.MagicMock) -> None:
     ff = FFmpeg()
     popen_mock.return_value.communicate.return_value = ("output", "error")
