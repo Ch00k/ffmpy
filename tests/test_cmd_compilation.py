@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 
 import pytest
 
@@ -14,7 +14,7 @@ from ffmpy import FFmpeg, FFprobe
         ["-hide_banner -y", "-v debug"],
     ],
 )
-def test_global_options(global_options: List) -> None:
+def test_global_options(global_options: list) -> None:
     ff = FFmpeg(global_options=global_options)
     assert ff._cmd == ["ffmpeg", "-hide_banner", "-y", "-v", "debug"]
     assert ff.cmd == "ffmpeg -hide_banner -y -v debug"
@@ -34,7 +34,7 @@ def test_global_options_none() -> None:
         ("-f", "rawvideo", "-pix_fmt", "rgb24", "-s:v", "640x480"),
     ],
 )
-def test_input_options(input_options: List) -> None:
+def test_input_options(input_options: list) -> None:
     ff = FFmpeg(inputs={"/tmp/rawvideo": input_options})
     assert ff._cmd == [
         "ffmpeg",
@@ -58,7 +58,7 @@ def test_input_options(input_options: List) -> None:
         ("-f", "rawvideo", "-pix_fmt", "rgb24", "-s:v", "640x480"),
     ],
 )
-def test_output_options(output_options: List) -> None:
+def test_output_options(output_options: list) -> None:
     ff = FFmpeg(outputs={"/tmp/rawvideo": output_options})
     assert ff._cmd == [
         "ffmpeg",
@@ -162,7 +162,7 @@ def test_quoted_option() -> None:
         "-an",
         "output.ts",
     ]
-    assert ff.cmd == 'ffmpeg -i input.ts -vf "{0}" -an output.ts'.format(quoted_option)
+    assert ff.cmd == f'ffmpeg -i input.ts -vf "{quoted_option}" -an output.ts'
 
 
 def test_path_with_spaces() -> None:

@@ -21,12 +21,8 @@ jobs:
           python-version: "3.12"
           architecture: x64
       - run: |
-          pip install poetry
-          poetry install --with dev
-      - run: poetry run flake8 .
-      - run: poetry run black --check --diff .
-      - run: poetry run isort --check --diff .
-      - run: poetry run mypy .
+          pip install pre-commit
+          pre-commit run --all-files
 
   test:
     runs-on: ubuntu-latest
@@ -38,6 +34,7 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
           - "pypy3.8"
           - "pypy3.9"
           - "pypy3.10"
@@ -49,7 +46,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: x64
       - run: |
-          pip install poetry
+          pip install "cryptography<44.0.0" poetry  # cryptography 44.0.0 is not compatible with pypy3.8
           poetry install --with dev
       - run: poetry run pytest --cov=ffmpy --cov-report xml
       - uses: codecov/codecov-action@v4
