@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import datetime
-from typing import Dict
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -33,7 +31,7 @@ html_theme = "sphinx_rtd_theme"
 
 htmlhelp_basename = "ffmpydoc"
 
-latex_elements: Dict = {}
+latex_elements: dict = {}
 latex_documents = [
     (master_doc, "ffmpy.tex", "ffmpy Documentation", "Andrii Yurchuk", "manual"),
 ]

@@ -31,6 +31,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
   "Operating System :: Microsoft :: Windows",
@@ -42,31 +43,20 @@ classifiers = [
 packages = [{ include = "ffmpy.py" }, { include = "py.typed" }]
 
 [tool.poetry.dependencies]
-python = "^3.8.1" # flake8 requires Python 3.8.1 or higher
+python = "^3.8"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
-isort = "^5.13.2"
-mypy = "^1.11.0"
-flake8 = "^7.1.0"
-flake8-pyproject = "^1.2.3"
-pytest = "^8.3.2"
+mypy = "^1.13.0"
+pytest = "^8.3.4"
 pytest-cov = "^5.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
+[tool.ruff]
 line-length = 101
-
-[tool.flake8]
-max-line-length = 101
-
-[tool.isort]
-profile = "black"
-line_length = 101
-include_trailing_comma = true
+lint.extend-ignore = ["E203", "E402"]
 
 [tool.mypy]
 disallow_untyped_defs = true

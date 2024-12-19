@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 import errno
 import itertools
 import shlex
 import subprocess
-from typing import IO, Any, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import IO, Any, Mapping, Sequence
 
 
-class FFmpeg(object):
+class FFmpeg:
     """Wrapper for various `FFmpeg <https://www.ffmpeg.org/>`_ related applications (ffmpeg,
     ffprobe).
     """
@@ -13,9 +15,9 @@ class FFmpeg(object):
     def __init__(
         self,
         executable: str = "ffmpeg",
-        global_options: Optional[Union[Sequence[str], str]] = None,
-        inputs: Optional[Mapping[str, Optional[Union[Sequence[str], str]]]] = None,
-        outputs: Optional[Mapping[str, Optional[Union[Sequence[str], str]]]] = None,
+        global_options: Sequence[str] | str | None = None,
+        inputs: Mapping[str, Sequence[str] | str | None] | None = None,
+        outputs: Mapping[str, Sequence[str] | str | None] | None = None,
     ) -> None:
         """Initialize FFmpeg command line wrapper.
 
@@ -54,19 +56,19 @@ class FFmpeg(object):
             self._cmd += _merge_args_opts(outputs)
 
         self.cmd = subprocess.list2cmdline(self._cmd)
-        self.process: Optional[subprocess.Popen] = None
+        self.process: subprocess.Popen | None = None
 
     def __repr__(self) -> str:
-        return "<{0!r} {1!r}>".format(self.__class__.__name__, self.cmd)
+        return f"<{self.__class__.__name__!r} {self.cmd!r}>"
 
     def run(
         self,
-        input_data: Optional[bytes] = None,
-        stdout: Optional[Union[IO, int]] = None,
-        stderr: Optional[Union[IO, int]] = None,
-        env: Optional[Mapping[str, str]] = None,
-        **kwargs: Any
-    ) -> Tuple[Optional[bytes], Optional[bytes]]:
+        input_data: bytes | None = None,
+        stdout: IO | int | None = None,
+        stderr: IO | int | None = None,
+        env: Mapping[str, str] | None = None,
+        **kwargs: Any,
+    ) -> tuple[bytes | None, bytes | None]:
         """Execute FFmpeg command line.
 
         ``input_data`` can contain input for FFmpeg in case ``pipe`` protocol is used for input.
@@ -103,7 +105,7 @@ class FFmpeg(object):
             )
         except OSError as e:
             if e.errno == errno.ENOENT:
-                raise FFExecutableNotFoundError("Executable '{0}' not found".format(self.executable))
+                raise FFExecutableNotFoundError(f"Executable '{self.executable}' not found")
             else:
                 raise
 
@@ -120,8 +122,8 @@ class FFprobe(FFmpeg):
     def __init__(
         self,
         executable: str = "ffprobe",
-        global_options: Optional[Union[Sequence[str], str]] = None,
-        inputs: Optional[Mapping[str, Optional[Union[Sequence[str], str]]]] = None,
+        global_options: Sequence[str] | str | None = None,
+        inputs: Mapping[str, Sequence[str] | str | None] | None = None,
     ) -> None:
         """Create an instance of FFprobe.
 
@@ -136,9 +138,7 @@ class FFprobe(FFmpeg):
         :param dict inputs: a dictionary specifying one or more inputs as keys with their
             corresponding options as values
         """
-        super(FFprobe, self).__init__(
-            executable=executable, global_options=global_options, inputs=inputs
-        )
+        super().__init__(executable=executable, global_options=global_options, inputs=inputs)
 
 
 class FFExecutableNotFoundError(Exception):
@@ -158,17 +158,17 @@ class FFRuntimeError(Exception):
         self.stdout = stdout
         self.stderr = stderr
 
-        message = "`{0}` exited with status {1}\n\nSTDOUT:\n{2}\n\nSTDERR:\n{3}".format(
+        message = "`{}` exited with status {}\n\nSTDOUT:\n{}\n\nSTDERR:\n{}".format(
             self.cmd, exit_code, (stdout or b"").decode(), (stderr or b"").decode()
         )
 
-        super(FFRuntimeError, self).__init__(message)
+        super().__init__(message)
 
 
 def _merge_args_opts(
-    args_opts_dict: Mapping[str, Optional[Union[Sequence[str], str]]],
+    args_opts_dict: Mapping[str, Sequence[str] | str | None],
     add_minus_i_option: bool = False,
-) -> List[str]:
+) -> list[str]:
     """Merge options with their corresponding arguments.
 
     Iterates over the dictionary holding arguments (keys) and options (values). Merges each
@@ -179,7 +179,7 @@ def _merge_args_opts(
     :return: merged list of strings with arguments and their corresponding options
     :rtype: list
     """
-    merged: List[str] = []
+    merged: list[str] = []
 
     for arg, opt in args_opts_dict.items():
         merged += _normalize_options(opt)
@@ -195,9 +195,7 @@ def _merge_args_opts(
     return merged
 
 
-def _normalize_options(
-    options: Optional[Union[Sequence[str], str]], split_mixed: bool = False
-) -> List[str]:
+def _normalize_options(options: Sequence[str] | str | None, split_mixed: bool = False) -> list[str]:
     """Normalize options string or list of strings.
 
     Splits `options` into a list of strings. If `split_mixed` is `True`, splits (flattens) mixed
