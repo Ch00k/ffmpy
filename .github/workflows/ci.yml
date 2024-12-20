@@ -47,8 +47,10 @@ jobs:
           architecture: x64
       - run: |
           pip install "cryptography<44.0.0" poetry  # cryptography 44.0.0 is not compatible with pypy3.8
-          poetry install --with dev
-      - run: poetry run pytest --cov=ffmpy --cov-report xml
+          poetry install
+          poetry run pytest --cov=ffmpy --cov-report xml
+          poetry install --extras psutil
+          poetry run pytest --cov=ffmpy --cov-report xml --cov-append
       - uses: codecov/codecov-action@v4
         if: matrix.python-version == 3.12
         with:
