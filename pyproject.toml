@@ -44,11 +44,15 @@ packages = [{ include = "ffmpy" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+psutil = { version = ">=5.5.0", optional = true } # 5.5.0 was realease around the same time as Python 3.8
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.13.0"
 pytest = "^8.3.4"
 pytest-cov = "^5.0.0"
+
+[tool.poetry.extras]
+psutil = ["psutil"]
 
 [build-system]
 requires = ["poetry-core"]

@@ -6,6 +6,15 @@ import shlex
 import subprocess
 from typing import IO, Any, Mapping, Sequence
 
+try:
+    from psutil import Popen  # noqa: F401
+
+    popen: type[subprocess.Popen | Popen]
+except ImportError:
+    popen = subprocess.Popen
+else:
+    popen = Popen
+
 
 class FFmpeg:
     """Wrapper for various `FFmpeg <https://www.ffmpeg.org/>`_ related applications (ffmpeg,
@@ -56,7 +65,7 @@ class FFmpeg:
             self._cmd += _merge_args_opts(outputs)
 
         self.cmd = subprocess.list2cmdline(self._cmd)
-        self.process: subprocess.Popen | None = None
+        self.process: subprocess.Popen | Popen | None = None
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__!r} {self.cmd!r}>"
@@ -100,7 +109,7 @@ class FFmpeg:
             `FFExecutableNotFoundError` in case the executable path passed was not valid
         """
         try:
-            self.process = subprocess.Popen(
+            self.process = popen(
                 self._cmd, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, env=env, **kwargs
             )
         except OSError as e:
