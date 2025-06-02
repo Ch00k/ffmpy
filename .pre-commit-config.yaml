@@ -3,18 +3,17 @@ default_language_version:
 
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+    rev: v0.11.12
     hooks:
       - id: ruff
       - id: ruff-format
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.9
     hooks:
-      - id: pyupgrade
-        args: [--py38-plus, --keep-runtime-typing]
+      - id: uv-lock
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.16.0
     hooks:
       - id: mypy

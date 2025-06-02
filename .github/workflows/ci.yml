@@ -29,7 +29,6 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
@@ -38,6 +37,7 @@ jobs:
           - "pypy3.8"
           - "pypy3.9"
           - "pypy3.10"
+          - "pypy3.11"
     name: test ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
@@ -45,12 +45,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+      - uses: astral-sh/setup-uv@v6
       - run: |
-          pip install "cryptography<44.0.0" poetry  # cryptography 44.0.0 is not compatible with pypy3.8
-          poetry install
-          poetry run pytest --cov=ffmpy --cov-report xml
-          poetry install --extras psutil
-          poetry run pytest --cov=ffmpy --cov-report xml --cov-append
+          uv sync
+          uv run pytest --cov=ffmpy --cov-report xml
+          uv sync --extra psutil
+          uv run pytest --cov=ffmpy --cov-report xml --cov-append
       - uses: codecov/codecov-action@v4
         if: matrix.python-version == 3.12
         with:
@@ -70,8 +70,9 @@ jobs:
         with:
           python-version: "3.12"
           architecture: x64
+      - uses: astral-sh/setup-uv@v6
       - run: |
-          pip install poetry
-          poetry publish --build
+          uv build
+          uv publish
         env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
