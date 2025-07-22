@@ -66,7 +66,7 @@ warn_unreachable = true
 show_column_numbers = true
 
 [build-system]
-requires = ["uv_build>=0.7.9,<0.8.0"]
+requires = ["uv_build>=0.7.9,<0.9.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
