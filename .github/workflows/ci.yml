@@ -64,6 +64,8 @@ jobs:
     needs:
       - lint
       - test
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -71,8 +73,5 @@ jobs:
           python-version: "3.12"
           architecture: x64
       - uses: astral-sh/setup-uv@v6
-      - run: |
-          uv build
-          uv publish
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1
