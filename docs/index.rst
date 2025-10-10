@@ -13,7 +13,7 @@ ffmpy
 
 At this moment *ffmpy* has wrappers for ``ffmpeg`` and ``ffprobe`` commands, but it should be possible to run other FFmpeg tools with it (e.g. ``ffserver``).
 
-*ffmpy* requires Python 3.8 or greater.
+*ffmpy* requires Python 3.9 or greater.
 
 Installation
 ------------
