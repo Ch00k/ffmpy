@@ -109,7 +109,7 @@ There are cases where the order of inputs and outputs must be preserved (e.g. wh
 
     >>> from collections import OrderedDict
     >>> inputs = OrderedDict([('video.mp4', None), ('audio_1.mp3', None), ('audio_2.mp3', None)])
-    >>> outputs = {'output.ts', '-map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2'}
+    >>> outputs = {'output.ts': '-map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2'}
     >>> ff = FFmpeg(inputs=inputs, outputs=outputs)
     >>> ff.cmd
     'ffmpeg -i video.mp4 -i audio_1.mp3 -i audio_2.mp3 -map 0 -c:v h264 -map 1 -c:a:0 ac3 -map 2 -c:a:1 mp2 output.ts'
