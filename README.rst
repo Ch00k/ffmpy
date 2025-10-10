@@ -1,4 +1,4 @@
-.. image:: https://github.com/Ch00k/ffmpy/workflows/test/badge.svg
+.. image:: https://github.com/Ch00k/ffmpy/workflows/ci/badge.svg
     :target: https://github.com/Ch00k/ffmpy/actions
     :alt: Tests
 
@@ -42,9 +42,9 @@ This will take the ``input.mp4`` file in the current directory as the input, cha
 
 Documentation
 -------------
-http://ffmpy.rtfd.io
+https://ffmpy.readthedocs.io/
 
-See `Examples <http://ffmpy.readthedocs.io/en/latest/examples.html>`_ section for usage examples.
+See `Examples <https://ffmpy.readthedocs.io/latest/examples.html>`_ section for usage examples.
 
 License
 -------
