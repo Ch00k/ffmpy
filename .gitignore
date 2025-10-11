@@ -1,4 +1,5 @@
 dist
+*coverage*
 
 # Sphinx
 docs/_build

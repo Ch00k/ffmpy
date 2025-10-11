@@ -182,7 +182,16 @@ def test_terminate_process() -> None:
     global_options = "--long-run"
     ff = FFmpeg(global_options=global_options)
 
-    thread_1 = threading.Thread(target=ff.run)
+    captured_exception: FFRuntimeError | None = None
+
+    def run_in_thread() -> None:
+        nonlocal captured_exception
+        try:
+            ff.run()
+        except FFRuntimeError as e:
+            captured_exception = e
+
+    thread_1 = threading.Thread(target=run_in_thread)
     thread_1.start()
 
     timeout = time.time() + 3
@@ -200,6 +209,8 @@ def test_terminate_process() -> None:
     thread_1.join()
 
     assert ff.process.returncode == -15
+    assert isinstance(captured_exception, FFRuntimeError)
+    assert captured_exception.exit_code == -15
 
 
 @mock.patch("ffmpy.ffmpy.popen")
