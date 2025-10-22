@@ -15,8 +15,8 @@ project = "ffmpy"
 copyright = f"2015-{datetime.datetime.now().year}, Andrii Yurchuk"
 author = "Andrii Yurchuk"
 
-version = "0.6.3"
-release = "0.6.3"
+version = "0.6.4"
+release = "0.6.4"
 
 language = "en"
 

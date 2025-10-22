@@ -1,6 +1,6 @@
 [project]
 name = "ffmpy"
-version = "0.6.3"
+version = "0.6.4"
 description = "A simple Python wrapper for FFmpeg"
 authors = [{ name = "Andrii Yurchuk", email = " <ay@mntw.re>" }]
 license = "MIT"
