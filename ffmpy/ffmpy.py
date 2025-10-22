@@ -161,14 +161,26 @@ class FFRuntimeError(Exception):
     ``cmd``, ``exit_code``, ``stdout``, ``stderr``.
     """
 
-    def __init__(self, cmd: str, exit_code: int, stdout: bytes, stderr: bytes) -> None:
+    def __init__(
+        self,
+        cmd: str,
+        exit_code: int,
+        stdout: bytes | str | None,
+        stderr: bytes | str | None,
+    ) -> None:
         self.cmd = cmd
         self.exit_code = exit_code
         self.stdout = stdout
         self.stderr = stderr
 
+        stdout_display = _safe_decode(stdout)
+        stderr_display = _safe_decode(stderr)
+
         message = "`{}` exited with status {}\n\nSTDOUT:\n{}\n\nSTDERR:\n{}".format(
-            self.cmd, exit_code, (stdout or b"").decode(), (stderr or b"").decode()
+            self.cmd,
+            exit_code,
+            stdout_display,
+            stderr_display,
         )
 
         super().__init__(message)
@@ -222,3 +234,12 @@ def _normalize_options(options: Sequence[str] | str | None, split_mixed: bool = 
             return list(itertools.chain(*[shlex.split(o) for o in options]))
         else:
             return list(options)
+
+
+def _safe_decode(stream_data: bytes | str | None) -> str:
+    """Convert FFmpeg output to text for error messages."""
+    if stream_data is None:
+        return ""
+    if isinstance(stream_data, bytes):
+        return stream_data.decode(errors="replace")
+    return stream_data

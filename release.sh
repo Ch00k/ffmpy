@@ -54,7 +54,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     git push origin "$NEW_VERSION"
 
     echo "Release $NEW_VERSION created successfully!"
-    echo "Binary build will start automatically via GitHub Actions."
     echo "Monitor at https://github.com/Ch00k/ffmpy/actions"
 else
     echo "Release cancelled"
