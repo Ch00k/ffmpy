@@ -240,3 +240,23 @@ def test_arbitraty_popen_kwargs(popen_mock: mock.MagicMock) -> None:
         encoding="foo",
         text="bar",
     )
+
+
+@mock.patch("ffmpy.ffmpy.popen")
+def test_runtime_error_with_text_mode(popen_mock: mock.MagicMock) -> None:
+    popen_mock.return_value.communicate.return_value = ("text stdout", "text stderr")
+    popen_mock.return_value.returncode = 1
+    ff = FFmpeg()
+
+    with pytest.raises(FFRuntimeError):
+        ff.run(text=True)
+
+
+@mock.patch("ffmpy.ffmpy.popen")
+def test_runtime_error_with_non_utf8_bytes(popen_mock: mock.MagicMock) -> None:
+    popen_mock.return_value.communicate.return_value = (b"\xff\xfe\xfd", b"\xff\xfe\xfd")
+    popen_mock.return_value.returncode = 1
+    ff = FFmpeg()
+
+    with pytest.raises(FFRuntimeError):
+        ff.run(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
