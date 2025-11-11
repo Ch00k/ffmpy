@@ -21,8 +21,10 @@ keywords = [
   "transcoding",
 ]
 classifiers = [
+  "Topic :: Multimedia",
   "Topic :: Multimedia :: Sound/Audio",
-  "Development Status :: 4 - Beta",
+  "Topic :: Multimedia :: Video",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
